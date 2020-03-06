@@ -4,6 +4,14 @@
         <title>Heroku Flask Template</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
         
     </head>
     <body>
@@ -21,5 +29,58 @@
             Heroku Flask Template is a simple web app programmed in Python-3 using flask micro-framework. It is created for begginers to understand the basics of creating a flask web app and deploying it on the Heroku. It can also be used as a template to create your new flask web apps which can then easily be deployable on Heroku.
         </p><br>
         <h3>You can download this plugin, or modify its source code from <a href="https://github.com/vetronus/heroku-flask-template">GitHub</a></h3>
+
+
+        <div>
+            <form action="process" method="POST">
+            <table style="width:60%">
+                <thead>
+                    <th>Security Type</th>
+                    <th>Symbol</th>
+                    <th>TimeFrame</th>
+                    <th>From Date</th>
+                    <th>To Date</th>
+                </thead>
+                <tbody>
+                    <td><input name="securityType" placeholder="securityType"></td>
+                    <td><input placeholder="enter symbol"></td>
+                    <td>
+                        <select>
+                            <option>Day</option>
+                            <option>Hour</option>
+                            <option>Minute</option>
+                            <option>5 Min</option>
+                            <option>30 Min</option>
+                        </select>
+                    </td>
+                    <td> <input type="text" class="datepicker"></td>
+                    <td><input type="text" class="datepicker"></td>
+                </tbody>
+
+              </tr>
+            </table>
+              <button type="submit" class="btn btn-primary" style="float: right; margin-right:200px"> Submit</button>
+            </form>
+            <table class="table">
+                 <tr><td>tick y </td><td>tick q </td></tr>
+                {% for tick in data.results %}
+                <tr>
+                    <td>{{ tick.t }} </td>
+                    <td>{{ tick.q }} </td>
+                </tr>
+                 {% endfor %}
+
+            </table>
+
+
+
+        </div>
+
+    <script>
+      $( function() {
+        $( ".datepicker" ).datepicker();
+
+      });
+  </script>
     </body>
 </html>
