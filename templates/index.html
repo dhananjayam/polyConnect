@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Heroku Flask Template</title>
+        <title>Polygon Datadownloader</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -12,40 +12,62 @@
 
         <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+        <style>
+            .form-control{
+                width: 80% !important;
+            }
+
+            .downloadBtn{
+                float : right;
+                width: 120px;
+            }
+        </style>
         
     </head>
     <body>
-        <h1 id="tittle">Heroku Flask Template</h1>
+        <h1 id="tittle">Polygon Data Downloader</h1>
         <nav>
             <ul>
-                <li><a href="index.html">HOME</a></li>
-                <li><a href="https://github.com/vetronus/heroku-flask-template">SOURCE CODE(GitHub)</a></li>
-                <li><a href="http://parthsarthee.com/">PARTH SARTHEE(Author)</a></li>
-                <li><a href="http://aroxbit.com">AROXBIT(Awesome Indie Startup)</a></li>
+                <li>Historical Data</li>
+                <li>Historical Trades</li>
+                <li>Daily Snapshot</li>
+
             </ul>
         </nav>
-        <h2>What is Heroku Flask Template</h2>
+        <h2>Historical Data</h2>
         <p>
-            Heroku Flask Template is a simple web app programmed in Python-3 using flask micro-framework. It is created for begginers to understand the basics of creating a flask web app and deploying it on the Heroku. It can also be used as a template to create your new flask web apps which can then easily be deployable on Heroku.
+            Enter symbol, timeframe, from Date, to Date and Limit to either download or display data.
         </p><br>
-        <h3>You can download this plugin, or modify its source code from <a href="https://github.com/vetronus/heroku-flask-template">GitHub</a></h3>
+        <h3>Historical Data Form</h3>
 
 
-        <div>
-            <form action="process" method="POST">
-            <table style="width:60%">
+        <div class="col-sm-12">
+             <form action="process" method="POST">
+            <div class="col-sm-8">
+                 <table >
                 <thead>
-                    <th>Security Type</th>
-                    <th>Symbol</th>
-                    <th>TimeFrame</th>
-                    <th>From Date</th>
-                    <th>To Date</th>
+
+                    <th class="text-center">Security Type</th>
+                    <th class="text-center">Symbol</th>
+                    <th class="text-center">TimeFrame</th>
+                    <th class="text-center">From Date</th>
+                    <th class="text-center">To Date</th>
+
                 </thead>
                 <tbody>
-                    <td><input name="securityType" placeholder="securityType"></td>
-                    <td><input placeholder="enter symbol"></td>
+
                     <td>
-                        <select>
+                    <select name="securityType" value="Equity" class="form-control">
+                            <option>Equity</option>
+                            <option>Currency</option>
+                            <option>Crypto</option>
+
+                        </select>
+                    </td>
+                    <td><input class="form-control" name="symbol" placeholder="enter symbol" ></td>
+                    <td>
+                        <select name="timeframe" value="Day" class="form-control">
                             <option>Day</option>
                             <option>Hour</option>
                             <option>Minute</option>
@@ -53,16 +75,25 @@
                             <option>30 Min</option>
                         </select>
                     </td>
-                    <td> <input type="text" class="datepicker"></td>
-                    <td><input type="text" class="datepicker"></td>
+                    <td> <input name="fromDt" type="text" class="datepicker form-control" ></td>
+                    <td><input  name="toDt" type="text" class="datepicker form-control" ></td>
+
+
+                    <td><button  type="submit" class="btn btn-primary downloadBtn" > Download</button></td>
+            <!--        <td><button  type="submit"  class="btn btn-primary downloadBtn" > Show</button></td> -->
                 </tbody>
 
               </tr>
             </table>
-              <button type="submit" class="btn btn-primary" style="float: right; margin-right:200px"> Submit</button>
+            </div>
+
+
+
+
+
             </form>
-            <table class="table">
-                 <tr><td>tick y </td><td>tick q </td></tr>
+            <table class="table" style="margin-top:15px;">
+            <!--     <tr><td>tick y </td><td>tick q </td></tr> -->
                 {% for tick in data.results %}
                 <tr>
                     <td>{{ tick.t }} </td>
