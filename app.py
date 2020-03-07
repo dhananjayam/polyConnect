@@ -1,8 +1,9 @@
 from flask import Flask, request, render_template,json
 from flask_csv import send_csv
-import numpy as np
 import requests
 import datetime
+
+
 
 app = Flask(__name__)
 
@@ -45,28 +46,50 @@ def process():
    todt = totime.date()
    toStr = todt.strftime("%Y-%m-%d")
    mutiplier="1"
+   print(timeframe)
 
-   if timeframe =="5 Min":
+   if timeframe =="5 min":
        mutiplier="5"
        timeframe="minute"
-   elif timeframe =="30 Min":
+   elif timeframe =="30 min":
        mutiplier="30"
        timeframe="minute"
 
-   print(fromStr)
+   print(mutiplier)
+   print(timeframe)
 
    urlStr="https://api.polygon.io/v2/aggs/ticker/"+symbol+"/range/"+mutiplier+"/"+timeframe+"/"+fromStr+"/"+toStr+"?unadjusted=true&apiKey=yWq25Y3mVWiADXve5h3bjKEp_3q1Tho9rM4U_R"
 
-
+   print(urlStr)
    resp = requests.get(urlStr)
 
    #return render_template ('index.html', data=resp.json())
 
-   arr = np.asarray(resp.json().get('results'))
 
+   #arr = np.asarray(resp.json().get('results'))
+   ray = (resp.json().get('results'))
+   ohlc=[]
+   vwapPresent = 0
+   print(ray)
+   for rec in ray:
+       rec['Open'] = rec.pop('o')
+       rec['High'] = rec.pop('h')
+       rec['Low'] = rec.pop('l')
+       rec['Close'] = rec.pop('c')
+       if 'vw' in rec.keys():
+           rec['VWAP'] = rec.pop('vw')
+           vwapPresent=1
+       rec['Volume'] = rec.pop('v')
+       rec['TradeCount'] = rec.pop('n')
+       rec['TradeTime'] = (datetime.datetime.fromtimestamp(rec.get('t')/1000))
+       rec.pop('t')
+       print(rec)
+       ohlc.append(rec)
 
-   return send_csv(arr, "test.csv", ['v', 'vw', 'o', 'c', 'h', 'l', 't', 'n'])
-
+   if vwapPresent==1:
+        return send_csv(ohlc, "test.csv", [ 'TradeTime','Open', 'High', 'Low','Close',  'Volume', 'VWAP',  'TradeCount'])
+   else:
+        return send_csv(ohlc, "test.csv", [ 'TradeTime','Open', 'High', 'Low','Close',  'Volume',  'TradeCount'])
 
 
 if __name__ == '__main__': app.run(debug=True)

@@ -6,6 +6,5 @@ itsdangerous
 Jinja2
 peewee
 Werkzeug
-numpy
 requests
 datetime
