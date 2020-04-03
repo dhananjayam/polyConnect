@@ -25,8 +25,9 @@ def gensignal():
         volRank={}
         combinedRank = {}
         fireList={}
-        symList = list(symbolList)[:250]
+        symList = list(symbolList)[:1000]
         #symList=['ORCL']
+        print('Running gensignal')
         for sym in symList:
             symbol=str(sym, 'utf-8')
             #symbol=sym
