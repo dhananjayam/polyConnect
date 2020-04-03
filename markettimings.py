@@ -23,7 +23,7 @@ def is_open():
     marketDelay=config.marketDelay
 
 
-    print('StartTime: {} EndTime: {} MarketDelay: {} '.format(StartTime, EndTime, marketDelay))
+    print('StartTime: {} EndTime: {} MarketDelay: {}  CurrentTime: {}'.format(StartTime, EndTime, marketDelay,datetime.now().time()))
 
     curTime = datetime.now().time()
     startHour = int(StartTime.split(":", 2)[0])
