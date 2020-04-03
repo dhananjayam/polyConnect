@@ -1,21 +1,45 @@
-from flask import Flask, request, render_template,json
+
+from flask import Flask, request, render_template, json, send_from_directory
 from flask_csv import send_csv
+from generateSignal import gensignal
 import requests
 import datetime
+from multiprocessing import Process, Queue
 
-
-
-app = Flask(__name__)
-
+app = Flask(__name__, static_folder="static")
 
 @app.route('/')
 def index():
   # resp = requests.get("https://api.polygon.io/v2/ticks/stocks/trades/AAPL/2018-02-02?limit=10&apiKey=yWq25Y3mVWiADXve5h3bjKEp_3q1Tho9rM4U_R")
 
-   # print(resp.json())
+  # print(resp.json())
 
-   return render_template ('index.html', data=[])
 
+  return render_template ('index.html', data=[])
+
+@app.route('/data')
+def serve_page():
+
+    dataList = gensignal()
+    print('I am in html')
+    # print(app_json)
+    return dataList
+
+@app.route('/index')
+def samplefunction():
+    return render_template('v1/index-V2.html')
+
+@app.route('/fetchData')
+def sendData(data):
+
+    print("data >> " + data)
+
+    return "OK"
+
+@app.route('/hello')
+def hello_world():
+    data = gensignal()
+    return data
 
 @app.route('/process', methods=['GET', 'POST'])
 def process():
@@ -30,8 +54,8 @@ def process():
 
    symbol=symbol.upper()
    timeframe=timeframe.lower()
-   print(symbol)
-   print(timeframe)
+   # print(symbol)
+   # print(timeframe)
 
    if secType == "Currency" :
        symbol ="C:"+symbol
@@ -46,7 +70,7 @@ def process():
    todt = totime.date()
    toStr = todt.strftime("%Y-%m-%d")
    mutiplier="1"
-   print(timeframe)
+   # print(timeframe)
 
    if timeframe =="5 min":
        mutiplier="5"
@@ -55,12 +79,12 @@ def process():
        mutiplier="30"
        timeframe="minute"
 
-   print(mutiplier)
-   print(timeframe)
+   # print(mutiplier)
+   # print(timeframe)
 
    urlStr="https://api.polygon.io/v2/aggs/ticker/"+symbol+"/range/"+mutiplier+"/"+timeframe+"/"+fromStr+"/"+toStr+"?unadjusted=true&apiKey=yWq25Y3mVWiADXve5h3bjKEp_3q1Tho9rM4U_R"
 
-   print(urlStr)
+   print("urlStr >> " + urlStr)
    resp = requests.get(urlStr)
 
    #return render_template ('index.html', data=resp.json())
@@ -70,7 +94,7 @@ def process():
    ray = (resp.json().get('results'))
    ohlc=[]
    vwapPresent = 0
-   print(ray)
+   # print(ray)
    for rec in ray:
        rec['Open'] = rec.pop('o')
        rec['High'] = rec.pop('h')
@@ -83,7 +107,7 @@ def process():
        rec['TradeCount'] = rec.pop('n')
        rec['TradeTime'] = (datetime.datetime.fromtimestamp(rec.get('t')/1000))
        rec.pop('t')
-       print(rec)
+       #print(rec)
        ohlc.append(rec)
 
    if vwapPresent==1:
@@ -92,4 +116,6 @@ def process():
         return send_csv(ohlc, "test.csv", [ 'TradeTime','Open', 'High', 'Low','Close',  'Volume',  'TradeCount'])
 
 
-if __name__ == '__main__': app.run(debug=True)
+if __name__ == '__main__':
+
+    app.run(debug=True)

@@ -1,117 +1,624 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <title>Polygon Datadownloader</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+<!doctype html>
+<html lang="en" ng-app="app">
 
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- <meta http-equiv="refresh" content="90" /> -->
 
-      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <title>ALGO BREEZE</title>
+    <link href="static/style.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto:300,400,500,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Advent+Pro|Anton&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="static/assets/bootstrap.min.css">
 
-        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
 
-        <style>
-            .form-control{
-                width: 80% !important;
-            }
+    <script type="text/javascript" src="static/assets/app.js"></script>
 
-            .downloadBtn{
-                float : right;
-                width: 120px;
-            }
-        </style>
-        
-    </head>
-    <body>
-        <h1 id="tittle">Polygon Data Downloader</h1>
-        <nav>
-            <ul>
-                <li>Historical Data</li>
-                <li>Historical Trades</li>
-                <li>Daily Snapshot</li>
+</head>
 
-            </ul>
-        </nav>
-        <h2>Historical Data</h2>
-        <p>
-            Enter symbol, timeframe, from Date, to Date and Limit to either download or display data.
-        </p><br>
-        <h3>Historical Data Form</h3>
+<body  ng-controller="dashboardCtrl" ng-cloak>
+    <header>
+        <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+            <div class="container-fluid">
+                <div class="row" style="width:100%;margin:0;">
+                    <div class="col-md-6 col-6">
+                        <img src="static/assets/ab-logo.png" class="ab-logo">
+                    </div>
+                    <div class="col-md-6 col-6">
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" style="float:right;">
+              <span class="navbar-toggler-icon"></span>
+            </button>
 
-
-        <div class="col-sm-12">
-             <form action="process" method="POST">
-            <div class="col-sm-8">
-                 <table >
-                <thead>
-
-                    <th class="text-center">Security Type</th>
-                    <th class="text-center">Symbol</th>
-                    <th class="text-center">TimeFrame</th>
-                    <th class="text-center">From Date</th>
-                    <th class="text-center">To Date</th>
-
-                </thead>
-                <tbody>
-
-                    <td>
-                    <select name="securityType" value="Equity" class="form-control">
-                            <option>Equity</option>
-                            <option>Currency</option>
-                            <option>Crypto</option>
-
-                        </select>
-                    </td>
-                    <td><input class="form-control" name="symbol" placeholder="enter symbol" ></td>
-                    <td>
-                        <select name="timeframe" value="Day" class="form-control">
-                            <option>Day</option>
-                            <option>Hour</option>
-                            <option>Minute</option>
-                            <option>5 Min</option>
-                            <option>30 Min</option>
-                        </select>
-                    </td>
-                    <td> <input name="fromDt" type="text" class="datepicker form-control" ></td>
-                    <td><input  name="toDt" type="text" class="datepicker form-control" ></td>
-
-
-                    <td><button  type="submit" class="btn btn-primary downloadBtn" > Download</button></td>
-            <!--        <td><button  type="submit"  class="btn btn-primary downloadBtn" > Show</button></td> -->
-                </tbody>
-
-              </tr>
-            </table>
+                        <div class="collapse navbar-collapse pull-right" id="navbarCollapse">
+                            <div class="dropdown pt-1">
+                                <i class="fa fa-user-circle-o c-w" class="dropdown-toggle" data-toggle="dropdown" style="font-size: 24px;cursor: pointer;"></i>
+                                <span class="dropdown-toggle c-w" data-toggle="dropdown" style="cursor: pointer;"> User </span>
+                                <div class="dropdown-menu" style="left:inherit;right:0;">
+                                    <a class="dropdown-item" href="#"><i class="fa fa-user" aria-hidden="true"></i> Profile</a>
+                                    <a class="dropdown-item" href="#"><i class="fa fa-cog" aria-hidden="true"></i> Settings</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="#"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
+        </nav>
 
+    </header>
 
+    <main role="main" class="mt-80 mb-80 mt-mob-80"  >
+        <div class="container-fluid" >
 
+            <div id="loader" style="display:none;"></div>
 
+            <div id="cover-spin" style="display:none;"></div>
 
-            </form>
-            <table class="table" style="margin-top:15px;">
-            <!--     <tr><td>tick y </td><td>tick q </td></tr> -->
-                {% for tick in data.results %}
-                <tr>
-                    <td>{{ tick.t }} </td>
-                    <td>{{ tick.q }} </td>
-                </tr>
-                 {% endfor %}
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-6 col-lg-9">
+                            <div class="card bg-plain mb-mob-30">
+                                <div class="card-body">
 
-            </table>
+                                    <div class="row" ng-if="activeData.length>0">
+                                        <div class="col-md-12">
+                                            <div id="CRankStrip2" class="invisable-xs">ACTIVE</div>
+                                            <h6 class="visable-xs">ACTIVE</h6>
+                                            <div class="usertable">
+                                                <table class="table table-striped" id="userdetail-table" style="margin-bottom: 0rem;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="text-left">SYMBOL</th>
+                                                            <th class="text-center">VOLUME </th>
+                                                            <th class="text-center">VRANK</th>
+                                                            <th class="text-center">PRICE </th>
+                                                            <th class="text-center">PRANK</th>
+                                                            <th class="text-center" >VSLOPE * PSLOPE</th>
+                                                            <th class="text-center">V<sub>t</sub> –V<sub>t-1 </sub></th>
+                                                            <th class="text-center">V<sub>t</sub> –V<sub>t-2</sub></th>
+                                                            <th class="text-center">V<sub>t</sub> –V<sub>t-3</sub> </th>
+                                                            <th class="text-center">P<sub>t</sub> –P<sub>t-1</sub> </th>
+                                                            <th class="text-center">P<sub>t</sub> –P<sub>t-2</sub> </th>
+                                                            <th class="text-center">P<sub>t</sub> –P<sub>t-3</sub> </th>
+                                                            <th class="text-center">DE-SELECT</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr ng-repeat="data in activeData">
+                                                            <td class="text-left">{{'{{data.key}}'}}</td>
+                                                            <td class="text-right">{{'{{data.vol}}'}}</td>
+                                                            <td class="text-right">{{'{{data.vRank}}'}}</td>
+                                                            <td class="text-right">{{'{{data.price}}'}}</td>
+                                                            <td class="text-right">{{'{{data.pRank}}'}}</td>
+                                                            <td class="text-right">{{'{{(data.mv * data.mp) | number : 4}}'}}</td>
+                                                            <td class="text-right">{{'{{data.vdiff1}}'}}</td>
+                                                            <td class="text-right">{{'{{data.vdiff2}}'}}</td>
+                                                            <td class="text-right">{{'{{data.vdiff3}}'}}</td>
+                                                            <td class="text-right">{{'{{data.pdiff1 | number : 4}}'}}</td>
+                                                            <td class="text-right">{{'{{data.pdiff2 | number : 4}}'}}</td>
+                                                            <td class="text-right">{{'{{data.pdiff3 | number : 4}}'}}</td>
+                                                            <td align="center">
+                                                                <label class="checksec">
+                                                                  <input type="radio" name="radio" ng-click="removeActive(data)">
+                                                                  <span class="checkmark"></span>
+                                                                </label>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
 
+                                    <div class="row">
+                                        <div class="col-lg-5">
+                                            <div id="CRankStrip3" class="invisable-xs">VOLUME RANK</div>
+                                            <div id="CRankStrip4" class="invisable-xs">PRICE RANK</div>
+                                            <h6 class="visable-xs mt-mob-20px">VOLUME RANK</h6>
+                                            <div class="usertable">
+                                                <table class="table table-striped" id="customtable">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="text-center">SYMBOL</th>
+                                                            <th class="text-center">VOLUME </th>
+                                                            <th class="text-center">VSLOPE </th>
+                                                            <th class="text-center">PRICE </th>
+                                                            <th class="text-center">PSLOPE</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody >
+                                                        <tr ng-repeat="data in dataList | orderBy : 'vRank' : 'reverse'">
+                                                            <td class="text-left">{{'{{data.key}}'}}</td>
+                                                            <td class="text-right">{{'{{data.vol}}'}}</td>
+                                                            <td class="text-right">{{'{{data.mv | number : 4}}'}}</td>
+                                                            <td class="text-right">{{'{{data.price | number : 2}}'}}</td>
+                                                            <td class="text-right">{{'{{data.mp | number : 4}}'}}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
 
+                                            <h6 class="visable-xs mt-mob-20px">PRICE RANK</h6>
+                                            <div class="usertable">
+                                                <table class="table table-striped" id="customtable2">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="text-center">SYMBOL</th>
+                                                            <th class="text-center">VOLUME </th>
+                                                            <th class="text-center">VSLOPE </th>
+                                                            <th class="text-center">PRICE </th>
+                                                            <th class="text-center">PSLOPE</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                       <tr ng-repeat="data in dataList | orderBy : 'pRank' : 'reverse'">
+                                                          <td class="text-left">{{'{{data.key}}'}}</td>
+                                                            <td class="text-right">{{'{{data.vol}}'}}</td>
+                                                            <td class="text-right">{{'{{data.mv | number : 4}}'}}</td>
+                                                            <td class="text-right">{{'{{data.price | number : 2}}'}}</td>
+                                                            <td class="text-right">{{'{{data.mp | number : 4}}'}}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-7">
+                                            <div id="CRankStrip" class="invisable-xs">COMBINED RANK</div>
+                                            <h6 class="visable-xs mt-mob-20px">COMBINED RANK</h6>
+                                            <div class="usertable">
+                                                <table class="table table-striped" id="customtable3">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="text-center">HOT ICON</th>
+                                                            <th class="text-center">SYMBOL</th>
+                                                            <th class="text-center">VOLUME </th>
+                                                            <th class="text-center">VSLOPE </th>
+                                                            <th class="text-center">PRICE </th>
+                                                            <th class="text-center">PSLOPE</th>
+                                                            <th class="text-center">SELECT</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr ng-repeat="data in dataList | orderBy : 'cRank' : 'reverse'">
+                                                            <td></td>
+                                                            <td class="text-left">{{'{{data.key}}'}}</td>
+                                                            <td class="text-right">{{'{{data.vol}}'}}</td>
+                                                            <td class="text-right">{{'{{data.mv | number : 4}}'}}</td>
+                                                            <td class="text-right">{{'{{data.price | number : 2}}'}}</td>
+                                                            <td class="text-right">{{'{{data.mp | number : 4}}'}}</td>
+                                                            <td align="center">
+                                                                <label class="checksec">
+                                                                  <input type="radio" name="radio" ng-click="addActive(data)">
+                                                                  <span class="checkmark"></span>
+                                                                </label>
+                                                            </td>
+                                                        </tr>
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 col-lg-3">
+
+                            <div class="card bg-plain">
+                                <div class="card-body">
+                                    <div align="center" style="height:290px;padding-top:40px;">
+                                        <!-- <img src="watch.png" height="150"> -->
+                                        <canvas id="canvas" width="200" height="200"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card bg-plain mt-20">
+                                <div class="card-body">
+                              <div style="display:flex;" class="mt-60 mt-mob-10px">
+                                <img src="assets/icon.png" height="30px" style="padding-top:5px;">
+                                <h4 style="padding-left:10px;">ON BOTH TOP <br>DOZEN RANKINGS</h4>
+                              </div>
+
+                              <div class="row mt-mob-80" style="margin-bottom:10px;">
+                                <div class="col-md-6" style="align-self: center;">
+                                  <h6>Market Delay</h6>
+                                </div>
+                                <div class="col-md-6"><input type="text" class="form-control" ng-model="marketDelay"></div>
+                              </div>
+                              <div class="row" style="margin-bottom:10px;">
+                                <div class="col-md-6" style="align-self: center;">
+                                  <h6>Tick Width</h6>
+                                </div>
+                                <div class="col-md-6"><input type="text" class="form-control" ng-model="tickWidth"></div>
+                              </div>
+                              <div class="row" style="margin-bottom:10px;">
+                                <div class="col-md-6" style="align-self: center;">
+                                  <h6>Log Base</h6>
+                                </div>
+                                <div class="col-md-6"><input type="text" class="form-control" ng-model="logBase"></div>
+                              </div>
+
+                               <div class="row">
+                                   <div class="col-sm-12">
+                                       <button class="btn btn-primary col-sm-12" title="submit" ng-click="submitData()">Submit</button>
+                                   </div>
+
+                               </div>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
         </div>
 
-    <script>
-      $( function() {
-        $( ".datepicker" ).datepicker();
+  </main>
 
-      });
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container-fluid">
+      <p class="float-right" style="margin-bottom: 0px;"><a href="#" style="color: #fff;"><i
+            class="fa fa-arrow-up"></i></a></p>
+      <p style="color: #fff;margin-bottom: 0px;">&copy; 2020 ALGO BREEZE</p>
+    </div>
+  </footer>
+
+
+
+
+  <!-- Bootstrap core JavaScript
+    ================================================== -->
+  <!-- Placed at the end of the document so the pages load faster -->
+  <script src="static/assets/jquery-3.2.1.slim.min.js"></script>
+  <script src="static/assets/popper.min.js"></script>
+  <script src="static/assets/bootstrap.min.js"></script>
+  <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
+  <script src="static/assets/holder.min.js"></script>
+  <script type="text/javascript">
+    window.onload = function () {
+
+      var options = {
+        exportEnabled: false,
+        animationEnabled: true,
+        legend: {
+          horizontalAlign: "right",
+          verticalAlign: "center"
+        },
+        data: [{
+          type: "pie",
+          showInLegend: true,
+          toolTipContent: "<b>{name}</b>: ${y} (#percent%)",
+          indexLabel: "{name}",
+          legendText: "{name} (#percent%)",
+          indexLabelPlacement: "inside",
+          dataPoints: [
+            { y: 1231.2, name: "Circle 1", color: "RoyalBlue" },
+            { y: 2599.2, name: "Circle 2" },
+            { y: 6566.4, name: "Circle 3" }
+          ]
+        }]
+      };
+      $("#chartContainer").CanvasJSChart(options);
+      $("#chartContainer2").CanvasJSChart(options);
+      $("#chartContainer3").CanvasJSChart(options);
+      $("#chartContainer4").CanvasJSChart(options);
+      $("#chartContainer5").CanvasJSChart(options);
+      $("#chartContainer6").CanvasJSChart(options);
+      $("#chartContainer7").CanvasJSChart(options);
+      $("#chartContainer8").CanvasJSChart(options);
+    }
   </script>
-    </body>
+  <script>
+    let modalId = $('#image-gallery');
+
+    $(document)
+      .ready(function () {
+
+        loadGallery(true, 'a.thumbnail');
+
+        //This function disables buttons when needed
+        function disableButtons(counter_max, counter_current) {
+          $('#show-previous-image, #show-next-image')
+            .show();
+          if (counter_max === counter_current) {
+            $('#show-next-image')
+              .hide();
+          } else if (counter_current === 1) {
+            $('#show-previous-image')
+              .hide();
+          }
+        }
+
+        /**
+         *
+         * @param setIDs        Sets IDs when DOM is loaded. If using a PHP counter, set to false.
+         * @param setClickAttr  Sets the attribute for the click handler.
+         */
+
+        function loadGallery(setIDs, setClickAttr) {
+          let current_image,
+            selector,
+            counter = 0;
+
+          $('#show-next-image, #show-previous-image')
+            .click(function () {
+              if ($(this)
+                .attr('id') === 'show-previous-image') {
+                current_image--;
+              } else {
+                current_image++;
+              }
+
+              selector = $('[data-image-id="' + current_image + '"]');
+              updateGallery(selector);
+            });
+
+          function updateGallery(selector) {
+            let $sel = selector;
+            current_image = $sel.data('image-id');
+            $('#image-gallery-title')
+              .text($sel.data('title'));
+            $('#image-gallery-image')
+              .attr('src', $sel.data('image'));
+            disableButtons(counter, $sel.data('image-id'));
+          }
+
+          if (setIDs == true) {
+            $('[data-image-id]')
+              .each(function () {
+                counter++;
+                $(this)
+                  .attr('data-image-id', counter);
+              });
+          }
+          $(setClickAttr)
+            .on('click', function () {
+              updateGallery($(this));
+            });
+        }
+      });
+
+    // build key actions
+    $(document)
+      .keydown(function (e) {
+        switch (e.which) {
+          case 37: // left
+            if ((modalId.data('bs.modal') || {})._isShown && $('#show-previous-image').is(":visible")) {
+              $('#show-previous-image')
+                .click();
+            }
+            break;
+
+          case 39: // right
+            if ((modalId.data('bs.modal') || {})._isShown && $('#show-next-image').is(":visible")) {
+              $('#show-next-image')
+                .click();
+            }
+            break;
+
+          default:
+            return; // exit this handler for other keys
+        }
+        e.preventDefault(); // prevent the default action (scroll / move caret)
+      });
+
+  </script>
+  <script>
+    function openNav() {
+      document.getElementById("mySidenav").style.width = "250px";
+    }
+
+    function closeNav() {
+      document.getElementById("mySidenav").style.width = "0";
+    }
+  </script>
+
+  <script>
+    $(document).ready(function () {
+      jQuery(document).ready(function () {
+        jQuery("#jquery-accordion-menu").jqueryAccordionMenu();
+        jQuery(".colors a").click(function () {
+          if ($(this).attr("class") != "default") {
+            $("#jquery-accordion-menu").removeClass();
+            $("#jquery-accordion-menu").addClass("jquery-accordion-menu").addClass($(this).attr("class"));
+          } else {
+            $("#jquery-accordion-menu").removeClass();
+            $("#jquery-accordion-menu").addClass("jquery-accordion-menu");
+          }
+        });
+      });
+    });
+
+
+  </script>
+
+  <script>
+    (function ($, window, document, undefined) {
+      var pluginName = "jqueryAccordionMenu";
+      var defaults = {
+        speed: 300,
+        showDelay: 0,
+        hideDelay: 0,
+        singleOpen: true,
+        clickEffect: true
+      };
+
+      function Plugin(element, options) {
+        this.element = element;
+        this.settings = $.extend({}, defaults, options);
+        this._defaults = defaults;
+        this._name = pluginName;
+        this.init()
+      };
+      $.extend(Plugin.prototype, {
+        init: function () {
+          this.openSubmenu();
+          this.submenuIndicators();
+          if (defaults.clickEffect) {
+            this.addClickEffect()
+          }
+        },
+        openSubmenu: function () {
+          $(this.element).children("ul").find("li").bind("click touchstart", function (e) {
+            e.stopPropagation();
+            e.preventDefault();
+            if ($(this).children(".submenu").length > 0) {
+              if ($(this).children(".submenu").css("display") == "none") {
+                $(this).children(".submenu").delay(defaults.showDelay).slideDown(defaults.speed);
+                $(this).children(".submenu").siblings("a").addClass("submenu-indicator-minus");
+                if (defaults.singleOpen) {
+                  $(this).siblings().children(".submenu").slideUp(defaults.speed);
+                  $(this).siblings().children(".submenu").siblings("a").removeClass("submenu-indicator-minus")
+                }
+                return false
+              } else {
+                $(this).children(".submenu").delay(defaults.hideDelay).slideUp(defaults.speed)
+              }
+              if ($(this).children(".submenu").siblings("a").hasClass("submenu-indicator-minus")) {
+                $(this).children(".submenu").siblings("a").removeClass("submenu-indicator-minus")
+              }
+            }
+            window.location.href = $(this).children("a").attr("href")
+          })
+        },
+        submenuIndicators: function () {
+          if ($(this.element).find(".submenu").length > 0) {
+            $(this.element).find(".submenu").siblings("a").append("<span class='submenu-indicator'>+</span>")
+          }
+        },
+        addClickEffect: function () {
+          var ink, d, x, y;
+          $(this.element).find("a").bind("click touchstart", function (e) {
+            $(".ink").remove();
+            if ($(this).children(".ink").length === 0) {
+              $(this).prepend("<span class='ink'></span>")
+            }
+            ink = $(this).find(".ink");
+            ink.removeClass("animate-ink");
+            if (!ink.height() && !ink.width()) {
+              d = Math.max($(this).outerWidth(), $(this).outerHeight());
+              ink.css({
+                height: d,
+                width: d
+              })
+            }
+            x = e.pageX - $(this).offset().left - ink.width() / 2;
+            y = e.pageY - $(this).offset().top - ink.height() / 2;
+            ink.css({
+              top: y + 'px',
+              left: x + 'px'
+            }).addClass("animate-ink")
+          })
+        }
+      });
+      $.fn[pluginName] = function (options) {
+        this.each(function () {
+          if (!$.data(this, "plugin_" + pluginName)) {
+            $.data(this, "plugin_" + pluginName, new Plugin(this, options))
+          }
+        });
+        return this
+      }
+    })(jQuery, window, document);
+  </script>
+
+  <script type="text/javascript" src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+  <script type="text/javascript" src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
+  <script>
+    var canvas = document.getElementById("canvas");
+    var ctx = canvas.getContext("2d");
+    var radius = canvas.height / 2;
+    ctx.translate(radius, radius);
+    radius = radius * 0.90
+    setInterval(drawClock, 1000);
+
+    function drawClock() {
+      drawFace(ctx, radius);
+      drawNumbers(ctx, radius);
+      drawTime(ctx, radius);
+    }
+
+    function drawFace(ctx, radius) {
+      var grad;
+      ctx.beginPath();
+      ctx.arc(0, 0, radius, 0, 2 * Math.PI);
+      ctx.fillStyle = 'white';
+      ctx.fill();
+      grad = ctx.createRadialGradient(0, 0, radius * 0.95, 0, 0, radius * 1.05);
+      grad.addColorStop(0, '#333');
+      grad.addColorStop(0.5, 'white');
+      grad.addColorStop(1, '#333');
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = radius * 0.1;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(0, 0, radius * 0.1, 0, 2 * Math.PI);
+      ctx.fillStyle = '#333';
+      ctx.fill();
+    }
+
+    function drawNumbers(ctx, radius) {
+      var ang;
+      var num;
+      ctx.font = radius * 0.15 + "px arial";
+      ctx.textBaseline = "middle";
+      ctx.textAlign = "center";
+      for (num = 1; num < 13; num++) {
+        ang = num * Math.PI / 6;
+        ctx.rotate(ang);
+        ctx.translate(0, -radius * 0.85);
+        ctx.rotate(-ang);
+        ctx.fillText(num.toString(), 0, 0);
+        ctx.rotate(ang);
+        ctx.translate(0, radius * 0.85);
+        ctx.rotate(-ang);
+      }
+    }
+
+    function drawTime(ctx, radius) {
+      var now = new Date();
+      var hour = now.getHours();
+      var minute = now.getMinutes();
+      var second = now.getSeconds();
+      //hour
+      hour = hour % 12;
+      hour = (hour * Math.PI / 6) +
+        (minute * Math.PI / (6 * 60)) +
+        (second * Math.PI / (360 * 60));
+      drawHand(ctx, hour, radius * 0.5, radius * 0.07);
+      //minute
+      minute = (minute * Math.PI / 30) + (second * Math.PI / (30 * 60));
+      drawHand(ctx, minute, radius * 0.8, radius * 0.07);
+      // second
+      second = (second * Math.PI / 30);
+      drawHand(ctx, second, radius * 0.9, radius * 0.02);
+    }
+
+    function drawHand(ctx, pos, length, width) {
+      ctx.beginPath();
+      ctx.lineWidth = width;
+      ctx.lineCap = "round";
+      ctx.moveTo(0, 0);
+      ctx.rotate(pos);
+      ctx.lineTo(0, -length);
+      ctx.stroke();
+      ctx.rotate(-pos);
+    }
+  </script>
+
+
+
+</body>
+
 </html>
