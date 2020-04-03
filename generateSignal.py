@@ -14,7 +14,7 @@ def gensignal():
     volList ={}
     combineList={}
     dataList = {}
-    if  not is_open():
+    if  is_open():
         redisurl='redis://h:p178447b35881e7b0c20eb34bd323348b8fc25dbb93281eb32856044f5e7fff2c@ec2-34-234-161-22.compute-1.amazonaws.com:24149'
         r = redis.from_url(redisurl)
         symbolList=[]
