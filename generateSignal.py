@@ -14,48 +14,58 @@ volRank = {}
 combinedRank = {}
 fireList = {}
 
+
 def runForEachSymbol(symbol):
     global priceRank
     global volRank
     global combinedRank
     global fireList
     global r
-    mv, mp, vol, close = calcPVSlopes(r, symbol)
-    compSym = {"mp": mp, "mv": mv, "price": close[0], "pdiff1": close[0] - close[1], "pdiff2": close[0] - close[2],
-               "pdiff3": close[0] - close[2],
-               "vol": vol[0], "vdiff1": vol[0] - vol[1], "vdiff2": vol[0] - vol[2], "vdiff3": vol[0] - vol[2],
-               "vRank": 0, "pRank": 0, "cRank": 0}
+    symbol=str(symbol, 'utf-8')
+    mv, mp, vol, close = calcPVSlopes(r, symbol,conf)
+    if len(close)>3:
+        compSym = {"mp": mp, "mv": mv, "price": close[0], "pdiff1": close[0] - close[1], "pdiff2": close[0] - close[2],
+                   "pdiff3": close[0] - close[2],
+                   "vol": vol[0], "vdiff1": vol[0] - vol[1], "vdiff2": vol[0] - vol[2], "vdiff3": vol[0] - vol[2],
+                   "vRank": 0, "pRank": 0, "cRank": 0}
+        print(compSym)
+        if mp > 0:
 
-    if mp > 0:
-        priceRank[symbol] = mp
-        volRank[symbol] = mv
-        combinedRank[symbol] = mp * mv
-        fireList[symbol] = compSym
-
+            volRank[symbol] = mv
+            combinedRank[symbol] = mp * mv
+            fireList[symbol] = compSym
+            priceRank[symbol] = mp
+            print('ere')
+            print (volRank, priceRank)
+            print('ehre')
 
 def gensignal():
     global conf
-    global r
+    app_json='Test'
     global priceRank
     global volRank
     global combinedRank
     global fireList
-    app_json='Test'
-    if   is_open():
+    global r
+    dataList = {}
+    if not  is_open():
+
         symbolList=[]
         symbols = "symbols"
         symbolList = r.smembers(symbols)
         print(symbolList)
+
+
         symList = list(symbolList)[:1000]
         #symList=['ORCL']
         print('Running gensignal')
         with ThreadPoolExecutor(max_workers=15) as executor:
-            for sym in symList:
-                symbol=str(sym, 'utf-8')
-                #symbol=sym
-                print(symbol)
-                executor.map(runForEachSymbol, symbol)
-
+            # for sym in symList:
+            # symbol=str(sym, 'utf-8')
+            # symbol=sym
+            # print(symbol)
+            for sym in executor.map(runForEachSymbol, symList):
+                pass
 
         n= conf.finalList
         if n==None:
@@ -97,7 +107,7 @@ def gensignal():
 
     #print(app_json)
     #print(len(fireList))
-
+    #print(app_json)
     return app_json
 
-# gensignal()
+#gensignal()

@@ -10,6 +10,7 @@ def calcPVSlopes(r,symbol,conf):
     Mv =None
     Mp=None
     try:
+        print(symbol)
 
         ohlc = r.zrevrange(symbol, 0, conf.tickWidth - 1)
         for i in ohlc:
@@ -27,62 +28,64 @@ def calcPVSlopes(r,symbol,conf):
         #print('EndTime: {}'.format(endtime))
 
         # Volume calculations
+        if len(close)>3:
 
-        logVol = [log(x, conf.logBase) for x in volume]
-        logVolMean = statistics.mean(logVol)
-        #print('logVol: {} logVolMean: {}'.format(logVol, logVolMean))
+            logVol = [log(x, conf.logBase) for x in volume]
+            logVolMean = statistics.mean(logVol)
+            #print('logVol: {} logVolMean: {}'.format(logVol, logVolMean))
 
-        sumlogVol = []
-        for i in range(len(logVol)):
-            sumlogVol.append(logVol[i] - logVolMean)
+            sumlogVol = []
+            for i in range(len(logVol)):
+                sumlogVol.append(logVol[i] - logVolMean)
 
-        # Price calculations
+            # Price calculations
 
-        priceMean = statistics.mean(close)
-        sumPrice = []
-        for i in range(len(close)):
-            sumPrice.append(close[i] - priceMean)
+            priceMean = statistics.mean(close)
+            sumPrice = []
+            for i in range(len(close)):
+                sumPrice.append(close[i] - priceMean)
 
-        # Time Calculations
+            # Time Calculations
 
-        timeMean = statistics.mean(endtime)
-        sumPrice = []
-        for i in range(len(close)):
-            sumPrice.append(close[i] - priceMean)
+            timeMean = statistics.mean(endtime)
+            sumPrice = []
+            for i in range(len(close)):
+                sumPrice.append(close[i] - priceMean)
 
-        timeI = []
-        avgTime = []
-        timeElements = len(endtime)
-        basetime = endtime[timeElements - 1]
-        for i in range(timeElements):
-            x = (endtime[i] - basetime)
-            timeI.append(x)
-            avgTime.append((x / timeElements))
-        timeMean = statistics.mean(timeI)
-        sumtimeMean = sum(avgTime)
-        finalTimeList = []
-        for i in range(len(timeI)):
-            finalTimeList.append(timeI[i] - timeMean)
+            timeI = []
+            avgTime = []
+            timeElements = len(endtime)
+            basetime = endtime[timeElements - 1]
+            for i in range(timeElements):
+                x = (endtime[i] - basetime)
+                timeI.append(x)
+                avgTime.append((x / timeElements))
+            timeMean = statistics.mean(timeI)
+            sumtimeMean = sum(avgTime)
+            finalTimeList = []
+            for i in range(len(timeI)):
+                finalTimeList.append(timeI[i] - timeMean)
 
-        #print(avgTime)
-        #print(timeI)
-        #print(finalTimeList)
-        #print('TimeMean:{},sumtimeMean:{}'.format(timeMean, sumtimeMean))
-        #print('timeI: {}'.format(timeI))
-        #print('sumPrice:{}'.format(sumPrice))
-        #print('sumlogVol: {}'.format(sumlogVol))
-        #print('Means---  Price:{}, logVol:{}, Time:{}'.format(priceMean, logVolMean, timeMean))
+            #print(avgTime)
+            #print(timeI)
+            #print(finalTimeList)
+            #print('TimeMean:{},sumtimeMean:{}'.format(timeMean, sumtimeMean))
+            #print('timeI: {}'.format(timeI))
+            #print('sumPrice:{}'.format(sumPrice))
+            #print('sumlogVol: {}'.format(sumlogVol))
+            #print('Means---  Price:{}, logVol:{}, Time:{}'.format(priceMean, logVolMean, timeMean))
 
-        numVolList = [sumlogVol[i] * finalTimeList[i] for i in range(len(finalTimeList))]
-        timeSquaredList = [finalTimeList[i] * finalTimeList[i] for i in range(len(finalTimeList))]
-        Mv = sum(numVolList) / sum(timeSquaredList)
+            numVolList = [sumlogVol[i] * finalTimeList[i] for i in range(len(finalTimeList))]
+            timeSquaredList = [finalTimeList[i] * finalTimeList[i] for i in range(len(finalTimeList))]
+            Mv = sum(numVolList) / sum(timeSquaredList)
 
-        numPriceList = [sumPrice[i] * finalTimeList[i] for i in range(len(finalTimeList))]
-        Mp = sum(numPriceList) / sum(timeSquaredList)
-        print(numVolList)
-        print(timeSquaredList)
-        print('Mv:{} Mp:{}'.format(Mv, Mp))
-    except :
-        print('Error calculating slopes for :{}'.format(symbol))
+            numPriceList = [sumPrice[i] * finalTimeList[i] for i in range(len(finalTimeList))]
+            Mp = sum(numPriceList) / sum(timeSquaredList)
+            #print(numVolList)
+            #print(timeSquaredList)
+            #print('Mv:{} Mp:{}'.format(Mv, Mp))
+    except AssertionError as error:
+            #print(error)
+            print('Error calculating slopes for :{}'.format(symbol))
     return Mv, Mp,volume,close
 
