@@ -17,7 +17,7 @@ app.controller('dashboardCtrl', ['$scope','$http', '$interval',function($scope, 
             logBase : $scope.logBase
         };
 
-        console.log("params >> " + angular.toJson(params));
+        //console.log("params >> " + angular.toJson(params));
 
          $http({
             method: "GET",
@@ -61,16 +61,11 @@ app.controller('dashboardCtrl', ['$scope','$http', '$interval',function($scope, 
                     pdiff3 : value.pdiff3
         });
 
-        console.log("activeData >> " + angular.toJson($scope.activeData));
+        //console.log("activeData >> " + angular.toJson($scope.activeData));
    };
 
    $scope.getInitData = function(status){
         $scope.appData = [];
-
-
-        //$('#loader').show();
-
-
         if(status){
              $('#cover-spin').show();
         }
@@ -81,18 +76,8 @@ app.controller('dashboardCtrl', ['$scope','$http', '$interval',function($scope, 
           //Success
             $('#cover-spin').hide();
 
-            var tempArr = result.data;
-
-            /*for(var i=0; i<12;i++){
-                var tempObj = tempArr[i];
-
-                $scope.appData.push(tempObj)
-            }
-
-            console.log("app data >> " + angular.toJson($scope.appData));*/
-
             $scope.appData = result.data;
-             $scope.dataList = [];
+            $scope.dataList = [];
 
             angular.forEach($scope.appData, function (value, key) {
                 //$scope.names.push(value.name);
@@ -117,9 +102,57 @@ app.controller('dashboardCtrl', ['$scope','$http', '$interval',function($scope, 
             console.log("$scope.dataList >> " + angular.toJson($scope.dataList));
 
             $scope.finalData = [];
-            for(i=0; i<12; i++){
+            $scope.combinedData = [];
+            var len1 = 12;
+            var len2 = 24;
+            for(var i=0; i<len1; i++){
+                if(i <= len1 && typeof $scope.dataList[i] != 'undefined'){
+                    $scope.finalData.push($scope.dataList[i]);
+                }else if(i<=len1 && typeof $scope.dataList[i] == 'undefined'){
+                    $scope.finalData.push({
+                        key: '',
+                        vol: '',
+                        price: '',
+                        mv: '',
+                        mp: '',
+                        vRank : '',
+                        pRank : '',
+                        cRank : '',
+                        vdiff1 : '',
+                        vdiff2 : '',
+                        vdiff3 : '',
+                        pdiff1 : '',
+                        pdiff2 : '',
+                        pdiff3 : ''
+                    });
+                }else{
+                    console.log("Exceeded 12");
+                }
+            }
 
-
+            for(var j=0; j<len2; j++){
+                if(j <= len2 && typeof $scope.dataList[j] != 'undefined'){
+                    $scope.combinedData.push($scope.dataList[j]);
+                }else if(j<=len2 && typeof $scope.dataList[j] == 'undefined'){
+                    $scope.combinedData.push({
+                        key: '',
+                        vol: '',
+                        price: '',
+                        mv: '',
+                        mp: '',
+                        vRank : '',
+                        pRank : '',
+                        cRank : '',
+                        vdiff1 : '',
+                        vdiff2 : '',
+                        vdiff3 : '',
+                        pdiff1 : '',
+                        pdiff2 : '',
+                        pdiff3 : ''
+                    });
+                }else{
+                    console.log("Exceeded 12");
+                }
             }
 
 

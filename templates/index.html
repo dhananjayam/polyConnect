@@ -6,8 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <!-- <meta http-equiv="refresh" content="90" /> -->
-
     <title>ALGO BREEZE</title>
     <link href="static/style.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto:300,400,500,700&display=swap" rel="stylesheet">
@@ -16,7 +14,6 @@
     <link rel="stylesheet" href="static/assets/bootstrap.min.css">
 
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
-
     <script type="text/javascript" src="static/assets/app.js"></script>
 
 </head>
@@ -117,7 +114,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="row">
+                                    <div class="row" ng-if="dataList.length > 0">
                                         <div class="col-lg-5">
                                             <div id="CRankStrip3" class="invisable-xs">VOLUME RANK</div>
                                             <div id="CRankStrip4" class="invisable-xs">PRICE RANK</div>
@@ -134,12 +131,21 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody >
-                                                        <tr ng-repeat="data in dataList | orderBy : 'vRank' : 'reverse'">
-                                                            <td class="text-left">{{'{{data.key}}'}}</td>
-                                                            <td class="text-right">{{'{{data.vol}}'}}</td>
-                                                            <td class="text-right">{{'{{data.mv | number : 4}}'}}</td>
-                                                            <td class="text-right">{{'{{data.price | number : 2}}'}}</td>
-                                                            <td class="text-right">{{'{{data.mp | number : 4}}'}}</td>
+                                                        <tr ng-repeat="data in finalData | orderBy : 'vRank' : 'reverse'">
+                                                            <td class="text-left" ng-if="data.key != ''">{{'{{data.key}}'}}</td>
+                                                            <td class="text-left" ng-if="data.key == ''"></td>
+
+                                                            <td class="text-right" ng-if="data.vol != ''">{{'{{data.vol}}'}}</td>
+                                                            <td class="text-right" ng-if="data.vol == ''"></td>
+
+                                                            <td class="text-right" ng-if="data.mv != ''">{{'{{data.mv | number : 4}}'}}</td>
+                                                            <td class="text-right" ng-if="data.mv == ''"></td>
+
+                                                            <td class="text-right" ng-if="data.price != ''">{{'{{data.price | number : 2}}'}}</td>
+                                                            <td class="text-right" ng-if="data.price == ''"></td>
+
+                                                            <td class="text-right" ng-if="data.mp != ''">{{'{{data.mp | number : 4}}'}}</td>
+                                                            <td class="text-right" ng-if="data.mp == ''"></td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -158,12 +164,21 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                       <tr ng-repeat="data in dataList | orderBy : 'pRank' : 'reverse'">
-                                                          <td class="text-left">{{'{{data.key}}'}}</td>
-                                                            <td class="text-right">{{'{{data.vol}}'}}</td>
-                                                            <td class="text-right">{{'{{data.mv | number : 4}}'}}</td>
-                                                            <td class="text-right">{{'{{data.price | number : 2}}'}}</td>
-                                                            <td class="text-right">{{'{{data.mp | number : 4}}'}}</td>
+                                                       <tr ng-repeat="data in finalData | orderBy : 'pRank' : 'reverse'">
+                                                            <td class="text-left" ng-if="data.key != ''">{{'{{data.key}}'}}</td>
+                                                            <td class="text-left" ng-if="data.key == ''"></td>
+
+                                                            <td class="text-right" ng-if="data.vol != ''">{{'{{data.vol}}'}}</td>
+                                                            <td class="text-right" ng-if="data.vol == ''"></td>
+
+                                                            <td class="text-right" ng-if="data.mv != ''">{{'{{data.mv | number : 4}}'}}</td>
+                                                            <td class="text-right" ng-if="data.mv == ''"></td>
+
+                                                            <td class="text-right" ng-if="data.price != ''">{{'{{data.price | number : 2}}'}}</td>
+                                                            <td class="text-right" ng-if="data.price == ''"></td>
+
+                                                            <td class="text-right" ng-if="data.mp != ''">{{'{{data.mp | number : 4}}'}}</td>
+                                                            <td class="text-right" ng-if="data.mp == ''"></td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -186,19 +201,30 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr ng-repeat="data in dataList | orderBy : 'cRank' : 'reverse'">
+                                                        <tr ng-repeat="data in combinedData | orderBy : 'cRank' : 'reverse'">
                                                             <td></td>
-                                                            <td class="text-left">{{'{{data.key}}'}}</td>
-                                                            <td class="text-right">{{'{{data.vol}}'}}</td>
-                                                            <td class="text-right">{{'{{data.mv | number : 4}}'}}</td>
-                                                            <td class="text-right">{{'{{data.price | number : 2}}'}}</td>
-                                                            <td class="text-right">{{'{{data.mp | number : 4}}'}}</td>
-                                                            <td align="center">
+                                                             <td class="text-left" ng-if="data.key != ''">{{'{{data.key}}'}}</td>
+                                                            <td class="text-left" ng-if="data.key == ''"></td>
+
+                                                            <td class="text-right" ng-if="data.vol != ''">{{'{{data.vol}}'}}</td>
+                                                            <td class="text-right" ng-if="data.vol == ''"></td>
+
+                                                            <td class="text-right" ng-if="data.mv != ''">{{'{{data.mv | number : 4}}'}}</td>
+                                                            <td class="text-right" ng-if="data.mv == ''"></td>
+
+                                                            <td class="text-right" ng-if="data.price != ''">{{'{{data.price | number : 2}}'}}</td>
+                                                            <td class="text-right" ng-if="data.price == ''"></td>
+
+                                                            <td class="text-right" ng-if="data.mp != ''">{{'{{data.mp | number : 4}}'}}</td>
+                                                            <td class="text-right" ng-if="data.mp == ''"></td>
+
+                                                            <td align="center" ng-if="data.key != ''">
                                                                 <label class="checksec">
                                                                   <input type="radio" name="radio" ng-click="addActive(data)">
                                                                   <span class="checkmark"></span>
                                                                 </label>
                                                             </td>
+                                                            <td ng-if="data.key == ''"></td>
                                                         </tr>
 
                                                     </tbody>
@@ -225,32 +251,34 @@
                             <div class="card bg-plain mt-20">
                                 <div class="card-body">
                               <div style="display:flex;" class="mt-60 mt-mob-10px">
-                                <img src="assets/icon.png" height="30px" style="padding-top:5px;">
-                                <h4 style="padding-left:10px;">ON BOTH TOP <br>DOZEN RANKINGS</h4>
+
+                                <!--<h4 style="padding-left:10px;">ON BOTH TOP <br>DOZEN RANKINGS</h4>-->
+
+                                  <h4>ON BOTH TOP DOZEN RANKINGS</h4>
                               </div>
 
                               <div class="row mt-mob-80" style="margin-bottom:10px;">
                                 <div class="col-md-6" style="align-self: center;">
                                   <h6>Market Delay</h6>
                                 </div>
-                                <div class="col-md-6"><input type="text" class="form-control" ng-model="marketDelay"></div>
+                                <div class="col-md-6"><input type="text" class="form-control" ng-model="marketDelay" style="width:50%"></div>
                               </div>
                               <div class="row" style="margin-bottom:10px;">
                                 <div class="col-md-6" style="align-self: center;">
                                   <h6>Tick Width</h6>
                                 </div>
-                                <div class="col-md-6"><input type="text" class="form-control" ng-model="tickWidth"></div>
+                                <div class="col-md-6"><input type="text" class="form-control" ng-model="tickWidth" style="width:50%"></div>
                               </div>
                               <div class="row" style="margin-bottom:10px;">
                                 <div class="col-md-6" style="align-self: center;">
                                   <h6>Log Base</h6>
                                 </div>
-                                <div class="col-md-6"><input type="text" class="form-control" ng-model="logBase"></div>
+                                <div class="col-md-6"><input type="text" class="form-control" ng-model="logBase" style="width:50%"></div>
                               </div>
 
                                <div class="row">
-                                   <div class="col-sm-12">
-                                       <button class="btn btn-primary col-sm-12" title="submit" ng-click="submitData()">Submit</button>
+                                   <div class="col-sm-12 text-center">
+                                       <button class="btn btn-primary col-sm-12" title="submit" ng-click="submitData()" style="width:30%;margin-left:120px;">Submit</button>
                                    </div>
 
                                </div>

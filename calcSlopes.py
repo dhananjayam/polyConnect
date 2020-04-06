@@ -12,17 +12,9 @@ def calcPVSlopes(r,symbol,conf):
     try:
 
         ohlc = r.zrevrange(symbol, 0, conf.tickWidth - 1)
-        xyz =[]
-
-
         for i in ohlc:
-            abc = r.hgetall(i)
-
-            # print(type(abc))
-            #print(abc.keys())
-            #print('ZZZZ')
-            for key, value in abc.items():
-                # print(key)
+            barData = r.hgetall(i)
+            for key, value in barData.items():
                 if str(key, 'utf-8') == "volume":
                     volume.append(int(value))
                 elif str(key, 'utf-8') == "close":
