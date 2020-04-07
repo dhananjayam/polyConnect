@@ -26,14 +26,17 @@ def runForEachSymbol(symbol):
     mv, mp, vol, close,endtime = calcPVSlopes(r, symbol,conf)
     if len(close)>3:
         d = datetime.datetime.fromtimestamp(int(endtime[0]))
+        #d1 = datetime.datetime.fromtimestamp(int(endtime[2]))
         dt =d.isoformat()
-        compSym = {"time": dt,"mp": mp, "mv": mv, "price": close[0], "pdiff1": close[0] - close[1], "pdiff2": close[0] - close[2],
+        #dt1 =d.isoformat()
+        #print('Symbol:{}, D0:{}, D1:{}'.format(symbol,d,d1))
+        compSym = {"time": dt,"vRank": -1, "pRank": -1, "cRank": -1,"mp": mp, "mv": mv, "price": close[0], "pdiff1": close[0] - close[1], "pdiff2": close[0] - close[2],
                    "pdiff3": close[0] - close[2],
-                   "vol": vol[0], "vdiff1": vol[0] - vol[1], "vdiff2": vol[0] - vol[2], "vdiff3": vol[0] - vol[2],
-                   "vRank": 0, "pRank": 0, "cRank": 0}
+                   "vol": vol[0], "vdiff1": vol[0] - vol[1], "vdiff2": vol[0] - vol[2], "vdiff3": vol[0] - vol[2]
+                   }
         #print(compSym)
         if mp > 0:
-
+            priceRank[symbol] = mp
             volRank[symbol] = mv
             combinedRank[symbol] = mp * mv
             fireList[symbol] = compSym
@@ -48,15 +51,15 @@ def gensignal():
     global fireList
     global r
     dataList = {}
-    if  is_open():
+    if  not is_open():
 
         symbolList=[]
         symbols = "symbols"
         symbolList = r.smembers(symbols)
-        #print(symbolList)
+        print(symbolList)
 
 
-        symList = list(symbolList) [:5000]
+        symList = list(symbolList) #[:100]
         #symList=['ORCL']
         print('Running gensignal')
         with ThreadPoolExecutor(max_workers=35) as executor:
@@ -75,7 +78,7 @@ def gensignal():
         volRank = dict(sorted(volRank.items(), key=operator.itemgetter(1), reverse=True)[:n])
         combinedRank=dict(sorted(combinedRank.items(), key=operator.itemgetter(1), reverse=True)[:n*2])
         #print(priceRank)
-        print(volRank)
+        #print(volRank)
         #print(combinedRank)
         key_list = list(fireList.keys())
         print('print list')
@@ -94,7 +97,7 @@ def gensignal():
         key1_list = list(fireList.keys())
         for key in key1_list:
                 rec = fireList[key]
-                if rec["pRank"]>0 or rec["vRank"] >0 or  rec["cRank"]>0 :
+                if ((rec["pRank"]>=0 and rec["pRank"]<12) or (rec["vRank"] >0 and rec["vRank"] <12) or  (rec["cRank"]>0 and rec["cRank"]<24)) :
                    print("allz well")
                 else :
                     if key in fireList.keys():

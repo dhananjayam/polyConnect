@@ -58,7 +58,8 @@ app.controller('dashboardCtrl', ['$scope','$http', '$interval',function($scope, 
                     vdiff3 : value.vdiff3,
                     pdiff1 : value.pdiff1,
                     pdiff2 : value.pdiff2,
-                    pdiff3 : value.pdiff3
+                    pdiff3 : value.pdiff3,
+                    time : value.time
         });
 
         //console.log("activeData >> " + angular.toJson($scope.activeData));
@@ -95,14 +96,14 @@ app.controller('dashboardCtrl', ['$scope','$http', '$interval',function($scope, 
                     vdiff3 : value.vdiff3,
                     pdiff1 : value.pdiff1,
                     pdiff2 : value.pdiff2,
-                    pdiff3 : value.pdiff3
+                    pdiff3 : value.pdiff3,
+                    time : value.time
                 });
             });
 
             console.log("$scope.dataList >> " + angular.toJson($scope.dataList));
 
             $scope.finalData = [];
-            $scope.combinedData = [];
             var len1 = 12;
             var len2 = 24;
             for(var i=0; i<len1; i++){
@@ -123,13 +124,16 @@ app.controller('dashboardCtrl', ['$scope','$http', '$interval',function($scope, 
                         vdiff3 : '',
                         pdiff1 : '',
                         pdiff2 : '',
-                        pdiff3 : ''
+                        pdiff3 : '',
+                        time : ''
                     });
                 }else{
                     console.log("Exceeded 12");
                 }
             }
+            console.log("$scope.finalData >> " + angular.toJson($scope.finalData));
 
+            $scope.combinedData = [];
             for(var j=0; j<len2; j++){
                 if(j <= len2 && typeof $scope.dataList[j] != 'undefined'){
                     $scope.combinedData.push($scope.dataList[j]);
@@ -148,12 +152,14 @@ app.controller('dashboardCtrl', ['$scope','$http', '$interval',function($scope, 
                         vdiff3 : '',
                         pdiff1 : '',
                         pdiff2 : '',
-                        pdiff3 : ''
+                        pdiff3 : '',
+                        time : ''
                     });
                 }else{
                     console.log("Exceeded 12");
                 }
             }
+            console.log("$scope.combinedData >> " + angular.toJson($scope.combinedData));
 
 
          }, function(error) {
@@ -166,7 +172,7 @@ app.controller('dashboardCtrl', ['$scope','$http', '$interval',function($scope, 
    $interval(function() {
         // your stuff
         $scope.getInitData(false);
-    }, 120000);
+    }, 60000);
 
     (function initController() {
         $scope.getInitData(true);
