@@ -28,16 +28,13 @@ def runForEachSymbol(symbol):
                    "pdiff3": close[0] - close[2],
                    "vol": vol[0], "vdiff1": vol[0] - vol[1], "vdiff2": vol[0] - vol[2], "vdiff3": vol[0] - vol[2],
                    "vRank": 0, "pRank": 0, "cRank": 0}
-        print(compSym)
+        #print(compSym)
         if mp > 0:
 
             volRank[symbol] = mv
             combinedRank[symbol] = mp * mv
             fireList[symbol] = compSym
-            priceRank[symbol] = mp
-            print('ere')
-            print (volRank, priceRank)
-            print('ehre')
+
 
 def gensignal():
     global conf
@@ -59,7 +56,7 @@ def gensignal():
         symList = list(symbolList)#[:2000]
         #symList=['ORCL']
         print('Running gensignal')
-        with ThreadPoolExecutor(max_workers=20) as executor:
+        with ThreadPoolExecutor(max_workers=25) as executor:
             # for sym in symList:
             # symbol=str(sym, 'utf-8')
             # symbol=sym
