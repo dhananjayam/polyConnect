@@ -51,7 +51,7 @@ def gensignal():
     global fireList
     global r
     dataList = {}
-    if  not is_open():
+    if  is_open():
 
         symbolList=[]
         symbols = "symbols"
