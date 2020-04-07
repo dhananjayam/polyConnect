@@ -31,7 +31,7 @@ def runForEachSymbol(symbol):
                    "pdiff3": close[0] - close[2],
                    "vol": vol[0], "vdiff1": vol[0] - vol[1], "vdiff2": vol[0] - vol[2], "vdiff3": vol[0] - vol[2],
                    "vRank": 0, "pRank": 0, "cRank": 0}
-        print(compSym)
+        #print(compSym)
         if mp > 0:
 
             volRank[symbol] = mv
