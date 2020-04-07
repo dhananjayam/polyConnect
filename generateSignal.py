@@ -53,10 +53,10 @@ def gensignal():
         symbolList=[]
         symbols = "symbols"
         symbolList = r.smembers(symbols)
-        print(symbolList)
+        #print(symbolList)
 
 
-        symList = list(symbolList) #[:6000]
+        symList = list(symbolList) [:6000]
         #symList=['ORCL']
         print('Running gensignal')
         with ThreadPoolExecutor(max_workers=35) as executor:
@@ -75,10 +75,10 @@ def gensignal():
         volRank = dict(sorted(volRank.items(), key=operator.itemgetter(1), reverse=True)[:n])
         combinedRank=dict(sorted(combinedRank.items(), key=operator.itemgetter(1), reverse=True)[:n*2])
         #print(priceRank)
-        #print(volRank)
+        print(volRank)
         #print(combinedRank)
         key_list = list(fireList.keys())
-        #print('print list')
+        print('print list')
         #print(key_list)
         #print(fireList)
         for key in key_list:

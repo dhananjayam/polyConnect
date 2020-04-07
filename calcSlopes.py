@@ -10,7 +10,7 @@ def calcPVSlopes(r,symbol,conf):
     Mv =None
     Mp=None
     try:
-        print(symbol)
+        #print(symbol)
 
         ohlc = r.zrevrange(symbol, 0, conf.tickWidth - 1)
         for i in ohlc:
