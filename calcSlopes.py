@@ -87,5 +87,5 @@ def calcPVSlopes(r,symbol,conf):
     except AssertionError as error:
             #print(error)
             print('Error calculating slopes for :{}'.format(symbol))
-    return Mv, Mp,volume,close
+    return Mv, Mp,volume,close,endtime
 

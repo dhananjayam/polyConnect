@@ -5,8 +5,9 @@ import operator
 import config
 import json
 from concurrent.futures import ThreadPoolExecutor
+import datetime
 
-redisurl = 'redis://h:p178447b35881e7b0c20eb34bd323348b8fc25dbb93281eb32856044f5e7fff2c@ec2-34-234-161-22.compute-1.amazonaws.com:24149'
+redisurl = 'redis://h:p178447b35881e7b0c20eb34bd323348b8fc25dbb93281eb32856044f5e7fff2c@ec2-34-238-130-162.compute-1.amazonaws.com:19039'
 r = redis.from_url(redisurl)
 conf = config.Config()
 priceRank = {}
@@ -22,13 +23,15 @@ def runForEachSymbol(symbol):
     global fireList
     global r
     symbol=str(symbol, 'utf-8')
-    mv, mp, vol, close = calcPVSlopes(r, symbol,conf)
+    mv, mp, vol, close,endtime = calcPVSlopes(r, symbol,conf)
     if len(close)>3:
-        compSym = {"mp": mp, "mv": mv, "price": close[0], "pdiff1": close[0] - close[1], "pdiff2": close[0] - close[2],
+        d = datetime.datetime.fromtimestamp(int(endtime[0]))
+        dt =d.isoformat()
+        compSym = {"time": dt,"mp": mp, "mv": mv, "price": close[0], "pdiff1": close[0] - close[1], "pdiff2": close[0] - close[2],
                    "pdiff3": close[0] - close[2],
                    "vol": vol[0], "vdiff1": vol[0] - vol[1], "vdiff2": vol[0] - vol[2], "vdiff3": vol[0] - vol[2],
                    "vRank": 0, "pRank": 0, "cRank": 0}
-        #print(compSym)
+        print(compSym)
         if mp > 0:
 
             volRank[symbol] = mv
@@ -45,7 +48,7 @@ def gensignal():
     global fireList
     global r
     dataList = {}
-    if   is_open():
+    if not  is_open():
 
         symbolList=[]
         symbols = "symbols"
@@ -53,10 +56,10 @@ def gensignal():
         print(symbolList)
 
 
-        symList = list(symbolList)[:4000]
+        symList = list(symbolList) #[:50]
         #symList=['ORCL']
         print('Running gensignal')
-        with ThreadPoolExecutor(max_workers=20) as executor:
+        with ThreadPoolExecutor(max_workers=30) as executor:
             # for sym in symList:
             # symbol=str(sym, 'utf-8')
             # symbol=sym
@@ -104,7 +107,7 @@ def gensignal():
 
     #print(app_json)
     #print(len(fireList))
-    #print(app_json)
+    print(app_json)
     return app_json
 
-#gensignal()
+gensignal()
