@@ -21,15 +21,15 @@ def calcPVSlopes(r,symbol,conf):
     Mp=None
     red= r
     try:
-        print(symbol)
+        #print(symbol)
 
         ohlc = r.zrevrange(symbol, 0, conf.tickWidth - 1)
-        print ('lEN.OHLG:{} OHLC:{}'.format(len(ohlc),ohlc))
+        #print ('lEN.OHLG:{} OHLC:{}'.format(len(ohlc),ohlc))
         if len(ohlc)== conf.tickWidth:
             with ThreadPoolExecutor(max_workers=3) as executor:
                 results = executor.map(getBarData, ohlc)
                 for barData in results:
-                    print('barDate:{}'.format(barData))
+                    #print('barDate:{}'.format(barData))
 
             #for i in ohlc:
                     #barData = r.hgetall(i)
@@ -43,7 +43,7 @@ def calcPVSlopes(r,symbol,conf):
 
                 #print('Volume: {}'.format(volume))
                 #print('Close: {}'.format(close))
-                print('EndTime1: {}'.format(endtime))
+                #print('EndTime1: {}'.format(endtime))
 
             # Volume calculations
             if len(endtime)>3:
@@ -58,10 +58,10 @@ def calcPVSlopes(r,symbol,conf):
 
                 # Price calculations
 
-                print('Closes:{}'.format(len(close)))
+                #print('Closes:{}'.format(len(close)))
                 basePrice = close[len(close)-1]
-                print(close)
-                print (basePrice)
+                #print(close)
+                #print (basePrice)
                 pctPriceChg = []
                 for i in range(len(close)):
                     pctPriceChg.append((close[i] - basePrice)*100/basePrice)

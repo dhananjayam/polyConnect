@@ -59,7 +59,7 @@ def gensignal():
         print(symbolList)
         symCount =len(symbolList)
         print('symbolList:{}'.format(symCount))
-        symList = list(symbolList) [:6000]
+        symList = list(symbolList) [:4000]
         #symList=['ORCL']
         print('Running gensignal')
         with ThreadPoolExecutor(max_workers=25) as executor:
