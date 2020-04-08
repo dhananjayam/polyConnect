@@ -7,7 +7,7 @@ import json
 from concurrent.futures import ThreadPoolExecutor
 import datetime
 
-redisurl = 'redis://h:p178447b35881e7b0c20eb34bd323348b8fc25dbb93281eb32856044f5e7fff2c@ec2-34-238-130-162.compute-1.amazonaws.com:19039'
+redisurl = 'redis://h:p178447b35881e7b0c20eb34bd323348b8fc25dbb93281eb32856044f5e7fff2c@ec2-3-234-145-181.compute-1.amazonaws.com:27899'
 r = redis.from_url(redisurl)
 conf = config.Config()
 priceRank = {}
@@ -22,7 +22,7 @@ def runForEachSymbol(symbol):
     global combinedRank
     global fireList
     global r
-#    symbol=str(symbol, 'utf-8')
+    symbol=str(symbol, 'utf-8')
     mv, mp, vol, close,endtime = calcPVSlopes(r, symbol,conf)
     if mp is not None:
         d = datetime.datetime.fromtimestamp(int(endtime[0]))
@@ -60,7 +60,7 @@ def gensignal():
         symCount =len(symbolList)
         print('symbolList:{}'.format(symCount))
         symList = list(symbolList) [:6000]
-        symList=['ORCL']
+        #symList=['ORCL']
         print('Running gensignal')
         with ThreadPoolExecutor(max_workers=30) as executor:
             # for sym in symList:
