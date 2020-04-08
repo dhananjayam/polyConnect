@@ -26,13 +26,13 @@ def calcPVSlopes(r,symbol,conf):
         ohlc = r.zrevrange(symbol, 0, conf.tickWidth - 1)
         #print ('lEN.OHLG:{} OHLC:{}'.format(len(ohlc),ohlc))
         if len(ohlc)== conf.tickWidth:
-            with ThreadPoolExecutor(max_workers=2) as executor:
-                results = executor.map(getBarData, ohlc)
-                for barData in results:
+           # with ThreadPoolExecutor(max_workers=2) as executor:
+           #     results = executor.map(getBarData, ohlc)
+           #     for barData in results:
                     #print('barDate:{}'.format(barData))
 
-            #for i in ohlc:
-                    #barData = r.hgetall(i)
+            for i in ohlc:
+                    barData = r.hgetall(i)
                     for key, value in barData.items():
                         if str(key, 'utf-8') == "volume":
                             volume.append(int(value))
@@ -106,9 +106,9 @@ def calcPVSlopes(r,symbol,conf):
 
                 numPriceList = [sumPrice[i] * finalTimeList[i] for i in range(len(finalTimeList))]
                 Mp = sum(numPriceList) / sum(timeSquaredList)
-                print(numVolList)
-                print(timeSquaredList)
-                print('Mv:{} Mp:{}'.format(Mv, Mp))
+                #print(numVolList)
+                #print(timeSquaredList)
+                #print('Mv:{} Mp:{}'.format(Mv, Mp))
     except AssertionError as error:
             #print(error)
             print('Error calculating slopes for :{}'.format(symbol))

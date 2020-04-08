@@ -4,6 +4,7 @@ from markettimings import is_open
 import operator
 import config
 import json
+import time
 from concurrent.futures import ThreadPoolExecutor
 import datetime
 
@@ -51,6 +52,8 @@ def gensignal():
     global fireList
     global r
     dataList = {}
+    startime =time.time()
+
     if is_open():
 
         symbolList=[]
@@ -62,7 +65,7 @@ def gensignal():
         symList = list(symbolList) [:6000]
         #symList=['ORCL']
         print('Running gensignal')
-        with ThreadPoolExecutor(max_workers=30) as executor:
+        with ThreadPoolExecutor(max_workers=50) as executor:
             # for sym in symList:
             # symbol=str(sym, 'utf-8')
             # symbol=sym
@@ -110,6 +113,8 @@ def gensignal():
 
     #print(app_json)
     #print(len(fireList))
+    endtime=time.time()
+    print('Time taken to finish run:{}'.format(int(endtime - startime)))
     print(app_json)
     return app_json
 
