@@ -21,15 +21,15 @@ def calcPVSlopes(r,symbol,conf):
     Mp=None
     red= r
     try:
-        #print(symbol)
+        print(symbol)
 
         ohlc = r.zrevrange(symbol, 0, conf.tickWidth - 1)
-        #print ('lEN.OHLG:{} OHLC:{}'.format(len(ohlc),ohlc))
+        print ('lEN.OHLG:{} OHLC:{}'.format(len(ohlc),ohlc))
         if len(ohlc)== conf.tickWidth:
-            with ThreadPoolExecutor(max_workers=3) as executor:
+            with ThreadPoolExecutor(max_workers=2) as executor:
                 results = executor.map(getBarData, ohlc)
                 for barData in results:
-                    #print('barDate:{}'.format(barData))
+                    print('barDate:{}'.format(barData))
 
             #for i in ohlc:
                     #barData = r.hgetall(i)
@@ -41,9 +41,9 @@ def calcPVSlopes(r,symbol,conf):
                         elif str(key, 'utf-8') == "endtime":
                            endtime.append(int(value))
 
-                #print('Volume: {}'.format(volume))
-                #print('Close: {}'.format(close))
-                #print('EndTime1: {}'.format(endtime))
+                print('Volume: {}'.format(volume))
+                print('Close: {}'.format(close))
+                print('EndTime1: {}'.format(endtime))
 
             # Volume calculations
             if len(endtime)>3:
@@ -90,14 +90,15 @@ def calcPVSlopes(r,symbol,conf):
                 for i in range(len(timeI)):
                     finalTimeList.append(timeI[i] - timeMean)
 
-                #print(avgTime)
-                #print(timeI)
-                #print(finalTimeList)
-                #print('TimeMean:{},sumtimeMean:{}'.format(timeMean, sumtimeMean))
-                #print('timeI: {}'.format(timeI))
-                #print('sumPrice:{}'.format(sumPrice))
-                #print('sumlogVol: {}'.format(sumlogVol))
-                #print('Means---  Price:{}, logVol:{}, Time:{}'.format(priceMean, logVolMean, timeMean))
+                print(avgTime)
+                print(timeI)
+                print(finalTimeList)
+                print('TimeMean:{},sumtimeMean:{}'.format(timeMean, sumtimeMean))
+                print('timeI: {}'.format(timeI))
+                print('sumPrice:{}'.format(sumPrice))
+                print('sumlogVol: {}'.format(sumlogVol))
+                print('Means---  Price:{}, logVol:{}, Time:{}'.format(pctPriceChgMean, logVolMean, timeMean))
+                print(pctPriceChg)
 
                 numVolList = [sumlogVol[i] * finalTimeList[i] for i in range(len(finalTimeList))]
                 timeSquaredList = [finalTimeList[i] * finalTimeList[i] for i in range(len(finalTimeList))]
@@ -105,9 +106,9 @@ def calcPVSlopes(r,symbol,conf):
 
                 numPriceList = [sumPrice[i] * finalTimeList[i] for i in range(len(finalTimeList))]
                 Mp = sum(numPriceList) / sum(timeSquaredList)
-                #print(numVolList)
-                #print(timeSquaredList)
-                #print('Mv:{} Mp:{}'.format(Mv, Mp))
+                print(numVolList)
+                print(timeSquaredList)
+                print('Mv:{} Mp:{}'.format(Mv, Mp))
     except AssertionError as error:
             #print(error)
             print('Error calculating slopes for :{}'.format(symbol))

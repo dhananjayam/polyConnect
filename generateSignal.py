@@ -22,7 +22,7 @@ def runForEachSymbol(symbol):
     global combinedRank
     global fireList
     global r
-    symbol=str(symbol, 'utf-8')
+#    symbol=str(symbol, 'utf-8')
     mv, mp, vol, close,endtime = calcPVSlopes(r, symbol,conf)
     if mp is not None:
         d = datetime.datetime.fromtimestamp(int(endtime[0]))
@@ -51,7 +51,7 @@ def gensignal():
     global fireList
     global r
     dataList = {}
-    if is_open():
+    if not is_open():
 
         symbolList=[]
         symbols = "symbols"
@@ -59,10 +59,10 @@ def gensignal():
         print(symbolList)
         symCount =len(symbolList)
         print('symbolList:{}'.format(symCount))
-        symList = list(symbolList) [:4000]
-        #symList=['ORCL']
+        symList = list(symbolList) [:6000]
+        symList=['ORCL']
         print('Running gensignal')
-        with ThreadPoolExecutor(max_workers=15) as executor:
+        with ThreadPoolExecutor(max_workers=30) as executor:
             # for sym in symList:
             # symbol=str(sym, 'utf-8')
             # symbol=sym
@@ -113,4 +113,4 @@ def gensignal():
     print(app_json)
     return app_json
 
-#gensignal()
+gensignal()
