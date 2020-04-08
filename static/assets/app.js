@@ -62,7 +62,7 @@ app.controller('dashboardCtrl', ['$scope','$http', '$interval',function($scope, 
                     time : value.time
         });
 
-        //console.log("activeData >> " + angular.toJson($scope.activeData));
+        console.log("activeData >> " + angular.toJson($scope.activeData));
    };
 
    $scope.getInitData = function(status){
@@ -101,7 +101,7 @@ app.controller('dashboardCtrl', ['$scope','$http', '$interval',function($scope, 
                 });
             });
 
-            console.log("$scope.dataList >> " + angular.toJson($scope.dataList));
+            //console.log("$scope.dataList >> " + angular.toJson($scope.dataList));
 
             $scope.finalData = [];
             var len1 = 12;
@@ -131,7 +131,7 @@ app.controller('dashboardCtrl', ['$scope','$http', '$interval',function($scope, 
                     console.log("Exceeded 12");
                 }
             }
-            console.log("$scope.finalData >> " + angular.toJson($scope.finalData));
+            //console.log("$scope.finalData >> " + angular.toJson($scope.finalData));
 
             $scope.combinedData = [];
             for(var j=0; j<len2; j++){
@@ -159,7 +159,35 @@ app.controller('dashboardCtrl', ['$scope','$http', '$interval',function($scope, 
                     console.log("Exceeded 12");
                 }
             }
-            console.log("$scope.combinedData >> " + angular.toJson($scope.combinedData));
+            //console.log("$scope.combinedData >> " + angular.toJson($scope.combinedData));
+
+
+            if($scope.activeData.length > 0){
+                for(var a=0; a<$scope.activeData.length; a++){
+                    var aObj = $scope.activeData[a];
+
+                     var found = false;
+                    for(var c=0; c<$scope.combinedData.length; c++){
+                        var tempObj = $scope.combinedData[c];
+                        //console.log("temp obj >> " + angular.toJson(tempObj));
+
+                        if(aObj.key != tempObj.key){
+                            found = false
+
+                        }else{
+                           return found = true;
+
+                        }
+                    }
+
+                    console.log("found >> " + found);
+
+                    if(found){
+                        $scope.activeData.push(aObj);
+                    }else{ $scope.activeData = []; }
+
+                }
+            }
 
 
          }, function(error) {
