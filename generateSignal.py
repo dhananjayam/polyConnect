@@ -59,9 +59,9 @@ def gensignal():
         symbolList=[]
         symbols = "symbols"
         symbolList = r.smembers(symbols)
-        print(symbolList)
+        #print(symbolList)
         symCount =len(symbolList)
-        print('symbolList:{}'.format(symCount))
+        #print('symbolList:{}'.format(symCount))
         symList = list(symbolList) [:6000]
         #symList=['ORCL']
         print('Running gensignal')
@@ -114,8 +114,8 @@ def gensignal():
     #print(app_json)
     #print(len(fireList))
     endtime=time.time()
-    print('Time taken to finish run:{}'.format(int(endtime - startime)))
     print(app_json)
+    print('Time taken to finish run:{}'.format(int(endtime - startime)))
     return app_json
 
 #gensignal()

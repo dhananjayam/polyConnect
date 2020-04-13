@@ -116,7 +116,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="row" ng-if="finalData.length > 0">
+                                    <div class="row" ng-if="volumeData.length > 0">
                                         <div class="col-lg-5">
                                             <div id="CRankStrip3" class="invisable-xs">VOLUME RANK</div>
                                             <div id="CRankStrip4" class="invisable-xs">PRICE RANK</div>
@@ -134,7 +134,7 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody >
-                                                        <tr ng-repeat="data in finalData | orderBy : 'vRank' ">
+                                                        <tr ng-repeat="data in volumeData  track by $index">
                                                             <td class="text-left" ng-if="data.key != ''">{{'{{data.key}}'}}</td>
                                                             <td class="text-left" ng-if="data.key == ''"></td>
 
@@ -171,7 +171,7 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                       <tr ng-repeat="data in finalData | orderBy : 'pRank'">
+                                                       <tr ng-repeat="data in priceData track by $index">
                                                             <td class="text-left" ng-if="data.key != ''">{{'{{data.key}}'}}</td>
                                                             <td class="text-left" ng-if="data.key == ''"></td>
 
@@ -212,9 +212,11 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr ng-repeat="data in combinedData | orderBy : 'cRank'">
-                                                            <td></td>
-                                                             <td class="text-left" ng-if="data.key != ''">{{'{{data.key}}'}}</td>
+                                                        <tr ng-repeat="data in combinedData track by $index">
+                                                            <td class="text-center" ng-show="data.showImage"><img src="/static/assets/icon.png" height="30px" style="padding-top:5px;"></td>
+                                                            <td class="text-center" ng-hide="data.showImage"></td>
+
+                                                            <td class="text-left" ng-if="data.key != ''">{{'{{data.key}}'}}</td>
                                                             <td class="text-left" ng-if="data.key == ''"></td>
 
                                                             <td class="text-right" ng-if="data.vol != ''">{{'{{data.vol}}'}}</td>
