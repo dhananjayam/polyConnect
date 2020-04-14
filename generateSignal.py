@@ -65,7 +65,7 @@ def gensignal():
     symbolList=[]
     symbols = "symbols"
     symbolList = r.smembers(symbols)
-    print(symbolList)
+    #print(symbolList)
     symCount =len(symbolList)
     #print('symbolList:{}'.format(symCount))
     symList = list(symbolList) [:6000]
@@ -97,7 +97,7 @@ def gensignal():
         rec = fireList[key]
 
         mx = rec["mp"]
-        print(mx)
+        #print(mx)
         if mx < 0.0:
             del fireList[key]
             continue
