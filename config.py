@@ -1,4 +1,4 @@
-
+from markettimings import is_open
 
 
 
@@ -9,8 +9,11 @@ startTime=None
 endTime=None
 timeinterval=None
 finalList=None
+
 def readfile():
     global marketDelay, tickWidth, logBase,startTime,endTime,timeinterval
+    global isOpen
+
     with open("config.properties") as file_in:
         lines = [line.rstrip() for line in file_in]
         for x in lines:
@@ -42,6 +45,7 @@ class Config:
     self.logBase=logBase
     self.timeinterval=timeinterval
     self.finalList=finalList
+
 
 
 

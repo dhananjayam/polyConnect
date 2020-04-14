@@ -3,6 +3,7 @@ import config
 from math import log
 import statistics
 import csv
+import time
 from concurrent.futures import ThreadPoolExecutor
 red=None
 
@@ -11,7 +12,7 @@ def getBarData(i):
 		return barData
 
 
-def calcPVSlopes(r,symbol,conf):
+def calcPVSlopes(r,symbol,conf,mktOpen):
     global red
     volume = []
     close = []
@@ -30,16 +31,26 @@ def calcPVSlopes(r,symbol,conf):
            #     results = executor.map(getBarData, ohlc)
            #     for barData in results:
                     #print('barDate:{}'.format(barData))
-
+            x=0
             for i in ohlc:
                     barData = r.hgetall(i)
+                    x=x+1
                     for key, value in barData.items():
                         if str(key, 'utf-8') == "volume":
                             volume.append(int(value))
                         elif str(key, 'utf-8') == "close":
                             close.append(float(value))
                         elif str(key, 'utf-8') == "endtime":
-                           endtime.append(int(value))
+                            endtime.append(int(value))
+                            millis = int(round(time.time()))
+                            #print('i =',i)
+                            if x==1 and mktOpen :
+                                #print('Symbol: {}, CurrentTime: {} LatestBar:{}'.format(symbol, str(millis), str(value)))
+                                if int(value) < (millis - 120):
+                                    return Mv, Mp,volume,close,endtime
+
+
+
 
                 #print('Volume: {}'.format(volume))
                 #print('Close: {}'.format(close))

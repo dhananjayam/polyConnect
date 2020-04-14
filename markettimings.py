@@ -3,9 +3,11 @@ from datetime import datetime, time
 import config
 import calendar
 
+
 marketDelay=0
 tickWidth=0
 logBase=0
+
 
 def is_weekend():
     weekday = datetime.datetime.today().weekday() # weekday as a number

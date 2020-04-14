@@ -15,7 +15,7 @@ priceRank = {}
 volRank = {}
 combinedRank = {}
 fireList = {}
-
+mktOpen =is_open()
 
 def runForEachSymbol(symbol):
     global priceRank
@@ -23,8 +23,9 @@ def runForEachSymbol(symbol):
     global combinedRank
     global fireList
     global r
+    global mktOpen
     symbol=str(symbol, 'utf-8')
-    mv, mp, vol, close,endtime = calcPVSlopes(r, symbol,conf)
+    mv, mp, vol, close,endtime = calcPVSlopes(r, symbol,conf,mktOpen)
     if mp is not None:
         d = datetime.datetime.fromtimestamp(int(endtime[0]))
         #d1 = datetime.datetime.fromtimestamp(int(endtime[2]))
@@ -36,11 +37,11 @@ def runForEachSymbol(symbol):
                    "vol": vol[0], "vdiff1": vol[0] - vol[1], "vdiff2": vol[0] - vol[2], "vdiff3": vol[0] - vol[2]
                    }
         #print(compSym)
-        if mp > 0:
-            priceRank[symbol] = mp
-            volRank[symbol] = mv
-            combinedRank[symbol] = mp * mv
-            fireList[symbol] = compSym
+
+        priceRank[symbol] = mp
+        volRank[symbol] = mv
+        combinedRank[symbol] = mp * mv
+        fireList[symbol] = compSym
 
 
 def gensignal():
@@ -51,61 +52,70 @@ def gensignal():
     global combinedRank
     global fireList
     global r
+    global mktOpen
     dataList = {}
     startime =time.time()
+    print('MktOpen:',mktOpen)
 
-    if is_open():
 
-        symbolList=[]
-        symbols = "symbols"
-        symbolList = r.smembers(symbols)
-        #print(symbolList)
-        symCount =len(symbolList)
-        #print('symbolList:{}'.format(symCount))
-        symList = list(symbolList) [:6000]
-        #symList=['ORCL']
-        print('Running gensignal')
-        with ThreadPoolExecutor(max_workers=50) as executor:
-            # for sym in symList:
-            # symbol=str(sym, 'utf-8')
-            # symbol=sym
-            # print(symbol)
-            for sym in executor.map(runForEachSymbol, symList):
-                pass
 
-        n= conf.finalList
-        if n==None:
-            n=12
+    symbolList=[]
+    symbols = "symbols"
+    symbolList = r.smembers(symbols)
+    print(symbolList)
+    symCount =len(symbolList)
+    #print('symbolList:{}'.format(symCount))
+    symList = list(symbolList) #[:60]
+    #symList=['ORCL']
+    print('Running gensignal')
+    with ThreadPoolExecutor(max_workers=50) as executor:
+        # for sym in symList:
+        # symbol=str(sym, 'utf-8')
+        # symbol=sym
+        # print(symbol)
+        for sym in executor.map(runForEachSymbol, symList):
+            pass
 
-        priceRank = dict(sorted(priceRank.items(), key=operator.itemgetter(1), reverse=True)[:n])
-        volRank = dict(sorted(volRank.items(), key=operator.itemgetter(1), reverse=True)[:n])
-        combinedRank=dict(sorted(combinedRank.items(), key=operator.itemgetter(1), reverse=True)[:n*2])
-        #print(priceRank)
-        #print(volRank)
-        #print(combinedRank)
-        key_list = list(fireList.keys())
-        print('print list')
-        #print(key_list)
-        #print(fireList)
-        for key in key_list:
+    n= conf.finalList
+    if n==None:
+        n=12
+
+    priceRank = dict(sorted(priceRank.items(), key=operator.itemgetter(1), reverse=True))
+    volRank = dict(sorted(volRank.items(), key=operator.itemgetter(1), reverse=True))
+    combinedRank=dict(sorted(combinedRank.items(), key=operator.itemgetter(1), reverse=True))
+    print(priceRank)
+    print(volRank)
+    print(combinedRank)
+    key_list = list(fireList.keys())
+    print('print list')
+    #print(key_list)
+    #print(fireList)
+    for key in key_list:
+        rec = fireList[key]
+
+        if key in priceRank:
+            rank =list(priceRank).index(key)
+            rec["pRank"]=rank
+            fireList.update(key=rec)
+            print(key,(list(priceRank).index(key)))
+        if key in volRank:
+            rec["vRank"] = list(volRank).index(key)
+            print(key, (list(volRank).index(key)))
+            fireList.update(key=rec)
+        if key in combinedRank:
+            rec["cRank"] = list(combinedRank).index(key)
+            print(key, (list(combinedRank).index(key)))
+            fireList.update(key=rec)
+
+    key1_list = list(fireList.keys())
+    for key in key1_list:
             rec = fireList[key]
-
-            if key in priceRank:
-                rec["pRank"] =list(priceRank).index(key)
-            if key in volRank:
-                rec["vRank"] = list(volRank).index(key)
-            if key in combinedRank:
-                rec["cRank"] = list(combinedRank).index(key)
-
-        key1_list = list(fireList.keys())
-        for key in key1_list:
-                rec = fireList[key]
-                if ((rec["pRank"]>=0 and rec["pRank"]<12) or (rec["vRank"] >0 and rec["vRank"] <12) or  (rec["cRank"]>0 and rec["cRank"]<24)) :
-                   print("allz well")
-                else :
-                    if key in fireList.keys():
-                        del fireList[key]
-        app_json = json.dumps(fireList)
+            if ((rec["pRank"]>=0 and rec["pRank"]<12) or (rec["vRank"] >0 and rec["vRank"] <12) or  (rec["cRank"]>0 and rec["cRank"]<24)) :
+               print("allz well")
+            else :
+                if key in fireList.keys():
+                    del fireList[key]
+    app_json = json.dumps(fireList)
 
 
     # print('Volume:{} Price:{} Combined{}'.format(len(volList),len(priceList),len(combineList)))
@@ -113,9 +123,11 @@ def gensignal():
 
     #print(app_json)
     #print(len(fireList))
+
     endtime=time.time()
+
     print(app_json)
     print('Time taken to finish run:{}'.format(int(endtime - startime)))
     return app_json
 
-#gensignal()
+gensignal()
