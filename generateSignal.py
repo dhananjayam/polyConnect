@@ -6,6 +6,7 @@ import config
 import json
 import time
 from concurrent.futures import ThreadPoolExecutor
+from pytz import timezone
 import datetime
 
 redisurl = 'redis://h:p178447b35881e7b0c20eb34bd323348b8fc25dbb93281eb32856044f5e7fff2c@ec2-3-234-145-181.compute-1.amazonaws.com:27899'
@@ -28,8 +29,10 @@ def runForEachSymbol(symbol):
     mv, mp, vol, close,endtime = calcPVSlopes(r, symbol,conf,mktOpen)
     if mp is not None:
         d = datetime.datetime.fromtimestamp(int(endtime[0]))
+        ny = d.astimezone(timezone('US/Eastern'))
+
         #d1 = datetime.datetime.fromtimestamp(int(endtime[2]))
-        dt =d.isoformat()
+        dt =ny.isoformat()
         #dt1 =d.isoformat()
         #print('Symbol:{}, D0:{}, D1:{}'.format(symbol,d,d1))
         compSym = {"time": dt,"vRank": -1, "pRank": -1, "cRank": -1,"mp": mp, "mv": mv, "price": close[0], "pdiff1": close[0] - close[1], "pdiff2": close[0] - close[2],
@@ -65,7 +68,7 @@ def gensignal():
     print(symbolList)
     symCount =len(symbolList)
     #print('symbolList:{}'.format(symCount))
-    symList = list(symbolList) [:3000]
+    symList = list(symbolList) [:6000]
     #symList=['ORCL']
     print('Running gensignal')
     with ThreadPoolExecutor(max_workers=50) as executor:
@@ -93,19 +96,27 @@ def gensignal():
     for key in key_list:
         rec = fireList[key]
 
+        mx = rec["mp"]
+        print(mx)
+        if mx < 0.0:
+            del fireList[key]
+            continue
+
         if key in priceRank:
             rank =list(priceRank).index(key)
             rec["pRank"]=rank
             fireList.update(key=rec)
-            print(key,(list(priceRank).index(key)))
+            #print(key,(list(priceRank).index(key)))
         if key in volRank:
             rec["vRank"] = list(volRank).index(key)
-            print(key, (list(volRank).index(key)))
+            #print(key, (list(volRank).index(key)))
             fireList.update(key=rec)
         if key in combinedRank:
             rec["cRank"] = list(combinedRank).index(key)
-            print(key, (list(combinedRank).index(key)))
+            #print(key, (list(combinedRank).index(key)))
             fireList.update(key=rec)
+
+
 
     key1_list = list(fireList.keys())
     for key in key1_list:
@@ -130,4 +141,4 @@ def gensignal():
     print('Time taken to finish run:{}'.format(int(endtime - startime)))
     return app_json
 
-gensignal()
+#gensignal()
