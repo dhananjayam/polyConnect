@@ -22,7 +22,7 @@ def calcPVSlopes(r,symbol,conf,mktOpen):
     Mp=None
     red= r
     try:
-        print(symbol)
+        #print(symbol)
 
         ohlc = r.zrevrange(symbol, 0, conf.tickWidth - 1)
         #print ('lEN.OHLG:{} OHLC:{}'.format(len(ohlc),ohlc))
