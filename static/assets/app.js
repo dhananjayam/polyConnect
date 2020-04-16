@@ -3,7 +3,7 @@ var transform = function(data) {
     return jQuery.param(data);
 };
 
-app.controller('dashboardCtrl', ['$scope','$http', '$interval','$filter',function($scope, $http, $interval, $filter) {
+app.controller('dashboardCtrl', ['$scope','$http', '$interval','$filter','$timeout',function($scope, $http, $interval, $filter, $timeout) {
 
     $scope.activeData = [];
     $scope.marketDelay = '';
@@ -84,98 +84,106 @@ app.controller('dashboardCtrl', ['$scope','$http', '$interval','$filter',functio
         if(status){
              $('#cover-spin').show();
         }
-         $http({
-            method: "GET",
-            url: '/data',
-         }).then(function(result) {
-          //Success
-            $('#cover-spin').hide();
 
-            $scope.appData = result.data;
-            $scope.dataList = [];
+        /*$timeout(function(){*/
+            $http({
+                method: "GET",
+                url: '/data',
+            }).then(function(result) {
+              //Success
+                $('#cover-spin').hide();
 
-            angular.forEach($scope.appData, function (value, key) {
-                $scope.dataList.push({
-                    key: key,
-                    vol: value.vol,
-                    price: value.price,
-                    mv: value.mv,
-                    mp: value.mp,
-                    vRank : value.vRank,
-                    pRank : value.pRank,
-                    cRank : value.cRank,
-                    vdiff1 : value.vdiff1,
-                    vdiff2 : value.vdiff2,
-                    vdiff3 : value.vdiff3,
-                    pdiff1 : value.pdiff1,
-                    pdiff2 : value.pdiff2,
-                    pdiff3 : value.pdiff3,
-                    time : value.time,
-                    hotIcon: false
+                $scope.appData = result.data;
+                $scope.dataList = [];
+
+                angular.forEach($scope.appData, function (value, key) {
+                    $scope.dataList.push({
+                        key: key,
+                        vol: value.vol,
+                        price: value.price,
+                        mv: value.mv,
+                        mp: value.mp,
+                        vRank : value.vRank,
+                        pRank : value.pRank,
+                        cRank : value.cRank,
+                        vdiff1 : value.vdiff1,
+                        vdiff2 : value.vdiff2,
+                        vdiff3 : value.vdiff3,
+                        pdiff1 : value.pdiff1,
+                        pdiff2 : value.pdiff2,
+                        pdiff3 : value.pdiff3,
+                        time : value.time,
+                        hotIcon: false
+                    });
                 });
-            });
 
-            if($scope.activeData.length > 0){
-                //console.log("$scope.activeData.length >> " + $scope.activeData.length);
+                if($scope.activeData.length > 0){
+                    //console.log("$scope.activeData.length >> " + $scope.activeData.length);
 
-                for(var a=0; a<$scope.dataList.length; a++){
-                    var tempObj = $scope.dataList[a];
+                    for(var a=0; a<$scope.dataList.length; a++){
+                        var tempObj = $scope.dataList[a];
 
-                    arrayObjectIndexOf($scope.activeData, tempObj);
+                        arrayObjectIndexOf($scope.activeData, tempObj);
 
+                    }
                 }
-            }
 
 
-            $scope.volumeRankData = $filter('orderBy')($scope.dataList, 'vRank');
-            $scope.priceRankData = $filter('orderBy')($scope.dataList, 'pRank');
-            $scope.combinedRankData = $filter('orderBy')($scope.dataList, 'cRank');
+                $scope.volumeRankData = $filter('orderBy')($scope.dataList, 'vRank');
+                $scope.priceRankData = $filter('orderBy')($scope.dataList, 'pRank');
+                $scope.combinedRankData = $filter('orderBy')($scope.dataList, 'cRank');
 
-            $scope.volumeData = [];
-            var len1 = 12;
-            var len2 = 24;
-            for(var i=0; i<len1; i++){
-                if(i <= len1 && typeof $scope.volumeRankData[i] != 'undefined'){
-                    $scope.volumeData.push($scope.volumeRankData[i]);
-                }else if(i<=len1 && typeof $scope.volumeRankData[i] == 'undefined'){
-                    $scope.volumeData.push($scope.initObj);
-                }else{
-                    // console.log("Exceeded 12");
+                $scope.volumeData = [];
+                var len1 = 12;
+                var len2 = 24;
+                for(var i=0; i<len1; i++){
+                    if(i <= len1 && typeof $scope.volumeRankData[i] != 'undefined'){
+                        $scope.volumeData.push($scope.volumeRankData[i]);
+                    }else if(i<=len1 && typeof $scope.volumeRankData[i] == 'undefined'){
+                        $scope.volumeData.push($scope.initObj);
+                    }else{
+                        // console.log("Exceeded 12");
+                    }
                 }
-            }
 
-            $scope.priceData = [];
-            for(var i=0; i<len1; i++){
-                if(i <= len1 && typeof $scope.priceRankData[i] != 'undefined'){
-                    $scope.priceData.push($scope.priceRankData[i]);
-                }else if(i<=len1 && typeof $scope.priceRankData[i] == 'undefined'){
-                    $scope.priceData.push($scope.initObj);
-                }else{
-                    // console.log("Exceeded 12");
+                $scope.priceData = [];
+                for(var i=0; i<len1; i++){
+                    if(i <= len1 && typeof $scope.priceRankData[i] != 'undefined'){
+                        $scope.priceData.push($scope.priceRankData[i]);
+                    }else if(i<=len1 && typeof $scope.priceRankData[i] == 'undefined'){
+                        $scope.priceData.push($scope.initObj);
+                    }else{
+                        // console.log("Exceeded 12");
+                    }
                 }
-            }
-            // console.log("$scope.priceData >> " + angular.toJson($scope.priceData));
+                // console.log("$scope.priceData >> " + angular.toJson($scope.priceData));
 
-            $scope.combinedData = [];
-            for(var j=0; j<len2; j++){
-                if(j <= len2 && typeof $scope.combinedRankData[j] != 'undefined'){
-                    $scope.combinedData.push($scope.combinedRankData[j]);
-                }else if(j<=len2 && typeof $scope.combinedRankData[j] == 'undefined'){
-                    $scope.combinedData.push($scope.initObj);
-                }else{
-                    // console.log("Exceeded 24");
+                $scope.combinedData = [];
+                for(var j=0; j<len2; j++){
+                    if(j <= len2 && typeof $scope.combinedRankData[j] != 'undefined'){
+                        $scope.combinedData.push($scope.combinedRankData[j]);
+                    }else if(j<=len2 && typeof $scope.combinedRankData[j] == 'undefined'){
+                        $scope.combinedData.push($scope.initObj);
+                    }else{
+                        // console.log("Exceeded 24");
+                    }
                 }
-            }
-            // console.log("$scope.combinedData >> " + angular.toJson($scope.combinedData));
+                // console.log("$scope.combinedData >> " + angular.toJson($scope.combinedData));
 
 
-            $scope.getHotIcon();
+                $scope.getHotIcon();
 
-         }, function(error) {
-         //Error
-            $('#cover-spin').hide();
-            alert('error');
-         });
+             }, function(error) {
+             //Error
+                $('#cover-spin').hide();
+                alert('error');
+             });
+
+
+        /*}, 50000);*/
+
+
+
    };
 
    function arrayObjectIndexOf(arr, obj){

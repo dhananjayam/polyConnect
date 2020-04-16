@@ -38,15 +38,17 @@ def calcPVSlopes(r,symbol,conf,mktOpen):
                     for key, value in barData.items():
                         if str(key, 'utf-8') == "volume":
                             volume.append(int(value))
+                            vl=int(value)
                         elif str(key, 'utf-8') == "close":
                             close.append(float(value))
+                            cl = (float(value))
                         elif str(key, 'utf-8') == "endtime":
                             endtime.append(int(value))
                             millis = int(round(time.time()))
                             #print('i =',i)
                             if x==1 and mktOpen :
-                                print('Symbol: {}, CurrentTime: {} LatestBar:{}'.format(symbol, str(millis), str(value)))
-                                if int(value) < (millis - 120):
+                                #print('Symbol: {}, CurrentTime: {} LatestBar:{}'.format(symbol, str(millis), str(value)))
+                                if int(value) < (millis - 120) or cl<1.0 or vl <300 :
                                     return Mv, Mp,volume,close,endtime
 
 
