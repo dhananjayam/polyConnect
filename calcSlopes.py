@@ -43,9 +43,9 @@ def calcPVSlopes(r,symbol,conf,mktOpen):
                         elif str(key, 'utf-8') == "endtime":
                             endtime.append(int(value))
                             millis = int(round(time.time()))
-                            print('i =',i)
+                            #print('i =',i)
                             if x==1 and mktOpen :
-                                print('Symbol: {}, CurrentTime: {} LatestBar:{}'.format(symbol, str(millis), str(value)))
+                                #print('Symbol: {}, CurrentTime: {} LatestBar:{}'.format(symbol, str(millis), str(value)))
                                 if int(value) < (millis - 120):
                                     return Mv, Mp,volume,close,endtime
 

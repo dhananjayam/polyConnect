@@ -65,9 +65,9 @@ def gensignal():
     symbolList=[]
     symbols = "symbols"
     symbolList = r.smembers(symbols)
-    print(symbolList)
+    #print(symbolList)
     symCount =len(symbolList)
-    #print('symbolList:{}'.format(symCount))
+    print('symbolList:{}'.format(symCount))
     symList = list(symbolList) [:5000]
     #symList=['ORCL']
     print('Running gensignal')
