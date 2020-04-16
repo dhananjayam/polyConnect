@@ -42,7 +42,7 @@ def calcPVSlopes(r,symbol,conf,mktOpen):
                         if str(key, 'utf-8') == "volume":
                             volume.append(int(value))
                             vl=int(value)
-                            if cl < 300: return Mv, Mp, volume, close, endtime
+                            if vl < 300: return Mv, Mp, volume, close, endtime
                         elif str(key, 'utf-8') == "close":
                             close.append(float(value))
                             cl = (float(value))
