@@ -16,7 +16,7 @@ priceRank = {}
 volRank = {}
 combinedRank = {}
 fireList = {}
-mktOpen =is_open()
+mktOpen = is_open()
 
 def runForEachSymbol(symbol):
     global priceRank
@@ -68,10 +68,10 @@ def gensignal():
     #print(symbolList)
     symCount =len(symbolList)
     #print('symbolList:{}'.format(symCount))
-    symList = list(symbolList) [:5000]
+    symList = list(symbolList) [:50]
     #symList=['ORCL']
     print('Running gensignal')
-    with ThreadPoolExecutor(max_workers=50) as executor:
+    with ThreadPoolExecutor(max_workers=30) as executor:
         # for sym in symList:
         # symbol=str(sym, 'utf-8')
         # symbol=sym
@@ -141,4 +141,4 @@ def gensignal():
     print('Time taken to finish run:{}'.format(int(endtime - startime)))
     return app_json
 
-#gensignal()
+# gensignal()

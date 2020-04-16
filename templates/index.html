@@ -89,7 +89,7 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr ng-repeat="data in activeData">
+                                                        <tr ng-repeat="data in activeData track by $index">
                                                             <td class="text-left">{{'{{data.key}}'}}</td>
                                                             <td class="text-right">{{'{{data.vol}}'}}</td>
                                                             <td class="text-right">{{'{{data.vRank}}'}}</td>

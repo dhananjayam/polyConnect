@@ -54,33 +54,29 @@ app.controller('dashboardCtrl', ['$scope','$http', '$interval','$filter',functio
 
     };
 
-
     $scope.removeActive = function(value){
         var index = $scope.activeData.indexOf(value);
         $scope.activeData.splice(index, 1);
-
     };
 
    $scope.addActive = function(value){
         $scope.activeData.push({
-                    key: value.key,
-                    vol: value.vol,
-                    price: value.price,
-                    mv: value.mv,
-                    mp: value.mp,
-                    vRank : value.vRank,
-                    pRank : value.pRank,
-                    cRank : value.cRank,
-                    vdiff1 : value.vdiff1,
-                    vdiff2 : value.vdiff2,
-                    vdiff3 : value.vdiff3,
-                    pdiff1 : value.pdiff1,
-                    pdiff2 : value.pdiff2,
-                    pdiff3 : value.pdiff3,
-                    time : value.time
+            key: value.key,
+            vol: value.vol,
+            price: value.price,
+            mv: value.mv,
+            mp: value.mp,
+            vRank : value.vRank,
+            pRank : value.pRank,
+            cRank : value.cRank,
+            vdiff1 : value.vdiff1,
+            vdiff2 : value.vdiff2,
+            vdiff3 : value.vdiff3,
+            pdiff1 : value.pdiff1,
+            pdiff2 : value.pdiff2,
+            pdiff3 : value.pdiff3,
+            time : value.time
         });
-
-        // console.log("activeData >> " + angular.toJson($scope.activeData));
    };
 
    $scope.getInitData = function(status){
@@ -118,6 +114,18 @@ app.controller('dashboardCtrl', ['$scope','$http', '$interval','$filter',functio
                     hotIcon: false
                 });
             });
+
+            if($scope.activeData.length > 0){
+                //console.log("$scope.activeData.length >> " + $scope.activeData.length);
+
+                for(var a=0; a<$scope.dataList.length; a++){
+                    var tempObj = $scope.dataList[a];
+
+                    arrayObjectIndexOf($scope.activeData, tempObj);
+
+                }
+            }
+
 
             $scope.volumeRankData = $filter('orderBy')($scope.dataList, 'vRank');
             $scope.priceRankData = $filter('orderBy')($scope.dataList, 'pRank');
@@ -163,36 +171,6 @@ app.controller('dashboardCtrl', ['$scope','$http', '$interval','$filter',functio
 
             $scope.getHotIcon();
 
-            //console.log("$scope.combinedData >> " + angular.toJson($scope.combinedData));
-
-            if($scope.activeData.length > 0){
-                for(var a=0; a<$scope.activeData.length; a++){
-                    var aObj = $scope.activeData[a];
-
-                     var found = false;
-                    for(var c=0; c<$scope.combinedData.length; c++){
-                        var tempObj = $scope.combinedData[c];
-                        //console.log("temp obj >> " + angular.toJson(tempObj));
-
-                        if(aObj.key != tempObj.key){
-                            found = false
-
-                        }else{
-                           return found = true;
-
-                        }
-                    }
-
-                    // console.log("found >> " + found);
-
-                }
-
-                if(!found){
-                    $scope.activeData = [];
-                }
-            }
-
-
          }, function(error) {
          //Error
             $('#cover-spin').hide();
@@ -200,6 +178,20 @@ app.controller('dashboardCtrl', ['$scope','$http', '$interval','$filter',functio
          });
    };
 
+   function arrayObjectIndexOf(arr, obj){
+        // console.log("success");
+
+        for(var i = 0; i < arr.length; i++){
+            if(angular.equals(arr[i].key, obj.key) && typeof arr[i].key != 'undefined' && typeof obj.key != 'undefined'){
+                //console.log("true");
+                $scope.removeActive(arr[i])
+
+                $scope.activeData.push(obj)
+                return i;
+            }
+        };
+        return -1;
+   }
 
    $scope.getHotIcon = function(){
         for(var c in $scope.combinedData){
