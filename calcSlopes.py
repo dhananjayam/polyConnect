@@ -45,7 +45,7 @@ def calcPVSlopes(r,symbol,conf,mktOpen):
                             millis = int(round(time.time()))
                             #print('i =',i)
                             if x==1 and mktOpen :
-                                #print('Symbol: {}, CurrentTime: {} LatestBar:{}'.format(symbol, str(millis), str(value)))
+                                print('Symbol: {}, CurrentTime: {} LatestBar:{}'.format(symbol, str(millis), str(value)))
                                 if int(value) < (millis - 120):
                                     return Mv, Mp,volume,close,endtime
 
@@ -119,7 +119,7 @@ def calcPVSlopes(r,symbol,conf,mktOpen):
                 Mp = sum(numPriceList) / sum(timeSquaredList)
                 #print(numVolList)
                 #print(timeSquaredList)
-                #print('Mv:{} Mp:{}'.format(Mv, Mp))
+                print('Mv:{} Mp:{}'.format(Mv, Mp))
     except AssertionError as error:
             #print(error)
             print('Error calculating slopes for :{}'.format(symbol))
