@@ -91,12 +91,14 @@ def gensignal():
     #print(combinedRank)
     key_list = list(fireList.keys())
     print('print list')
+    print(len(fireList))
     #print(key_list)
     #print(fireList)
     for key in key_list:
         rec = fireList[key]
 
         mx = rec["mp"]
+
         #print(mx)
         if mx < 0.0:
             del fireList[key]

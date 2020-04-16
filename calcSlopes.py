@@ -32,19 +32,24 @@ def calcPVSlopes(r,symbol,conf,mktOpen):
            #     for barData in results:
                     #print('barDate:{}'.format(barData))
             x=0
+            cl=0
+            vl=0
             for i in ohlc:
                     barData = r.hgetall(i)
+                    #print(barData)
                     x=x+1
                     for key, value in barData.items():
-                        if str(key, 'utf-8') == "volume":
-                            volume.append(int(value))
-                            vl=int(value)
-                        elif str(key, 'utf-8') == "close":
+
+                        if str(key, 'utf-8') == "close":
                             close.append(float(value))
                             cl = (float(value))
                         elif str(key, 'utf-8') == "endtime":
                             endtime.append(int(value))
+
                             millis = int(round(time.time()))
+                        elif str(key, 'utf-8') == "volume":
+                            volume.append(int(value))
+                            vl = int(value)
                             #print('i =',i)
                             if x==1 and mktOpen :
                                 #print('Symbol: {}, CurrentTime: {} LatestBar:{}'.format(symbol, str(millis), str(value)))
