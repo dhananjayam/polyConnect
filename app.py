@@ -23,8 +23,8 @@ def index():
 def serve_page():
 
     dataList = gensignal()
-    # print('I am in html')
-    # print(app_json)
+    print('I am in html')
+    #print(app_json)
     return dataList
 
 @app.route('/index')

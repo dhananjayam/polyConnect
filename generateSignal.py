@@ -71,7 +71,7 @@ def gensignal():
     symList = list(symbolList) [:5000]
     #symList=['ORCL']
     print('Running gensignal')
-    with ThreadPoolExecutor(max_workers=30) as executor:
+    with ThreadPoolExecutor(max_workers=50) as executor:
         # for sym in symList:
         # symbol=str(sym, 'utf-8')
         # symbol=sym
