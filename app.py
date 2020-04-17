@@ -24,8 +24,9 @@ def index():
 def serve_page():
     global dataList
     symbols = request.args.get("symbolData", None)
-    print("symbols :: ", symbols)
+    #print("symbols :: ", symbols)
     dataList = gensignal(symbols)
+    print("symbols :: ", symbols)
     print('I am in html')
     #print(app_json)
     return dataList

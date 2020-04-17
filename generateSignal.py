@@ -39,8 +39,6 @@ def runForEachSymbol(symbol):
     mv, mp, vol, close,endtime = calcPVSlopes(r, symbol,conf,mktOpen,type)
     if mp is not None:
         now =int(time.time())
-        print(now)
-        print(endtime)
         d = datetime.datetime.fromtimestamp(int(endtime[0]))
         ny = d.astimezone(timezone('US/Eastern'))
         dt = ny.isoformat()
@@ -81,7 +79,7 @@ def gensignal(actsyms):
     dataList = {}
     startime =time.time()
     print('MktOpen:',mktOpen)
-
+    print(actsyms)
     if actsyms is not None and len(actsyms)>0:
         activesym=actsyms.split(",")
 
@@ -151,7 +149,7 @@ def gensignal(actsyms):
     for key in key1_list:
             rec = fireList[key]
             if ((rec["pRank"]>=0 and rec["pRank"]<12) or (rec["vRank"] >0 and rec["vRank"] <12) or  (rec["cRank"]>0 and rec["cRank"]<24)or (rec["type"]=="active")) :
-               print("allz well")
+               a=1
             else :
                 if key in fireList.keys():
                     del fireList[key]
@@ -169,7 +167,6 @@ def gensignal(actsyms):
     print(app_json)
 
     print('Time taken to finish run:{}'.format(int(endtime - startime)))
-    print(type(app_json))
     return app_json
 
 #gensignal("")
