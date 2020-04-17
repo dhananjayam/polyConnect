@@ -9,6 +9,7 @@ import fileinput
 import configparser
 
 app = Flask(__name__, static_folder="static")
+dataList=None
 
 @app.route('/')
 def index():
@@ -21,8 +22,10 @@ def index():
 
 @app.route('/data')
 def serve_page():
-
-    dataList = gensignal()
+    global dataList
+    symbols = request.args.get("symbolData", None)
+    print("symbols :: ", symbols)
+    dataList = gensignal(symbols)
     print('I am in html')
     #print(app_json)
     return dataList
@@ -59,14 +62,7 @@ def sendData():
         else:
             print('{}'.format(line),end='')
     x.close()
-    """
-    text = open("config.properties").read()
-    if mktDelay is not None and mktDelay.isdigit:
-        new_text = '\n'.join(y if "MarkeyDelay" in line else line
-                             for line in text.splitlines())
-    open("config.properties", 'w').write(new_text)
 
-    """
 
     return "OK"
 

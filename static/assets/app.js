@@ -27,7 +27,8 @@ app.controller('dashboardCtrl', ['$scope','$http', '$interval','$filter','$timeo
         pdiff2 : '',
         pdiff3 : '',
         time : '',
-        hotIcon: false
+        hotIcon: false,
+        type : ''
     }
 
     $scope.submitData = function(){
@@ -75,7 +76,8 @@ app.controller('dashboardCtrl', ['$scope','$http', '$interval','$filter','$timeo
             pdiff1 : value.pdiff1,
             pdiff2 : value.pdiff2,
             pdiff3 : value.pdiff3,
-            time : value.time
+            time : value.time,
+            type : value.type
         });
    };
 
@@ -85,13 +87,31 @@ app.controller('dashboardCtrl', ['$scope','$http', '$interval','$filter','$timeo
              $('#cover-spin').show();
         }
 
-        /*$timeout(function(){*/
+        var symbols = [];
+        var params = {};
+        if($scope.activeData.length > 0){
+            for(var at=0; at<$scope.activeData.length; at++){
+                symbols.push($scope.activeData[at].key);
+            }
+
+            var params = {
+                symbolData : symbols.join(",")
+            };
+
+        }
+
+        console.log("params >> " + angular.toJson(params));
+
+
             $http({
                 method: "GET",
                 url: '/data',
+                params: params
             }).then(function(result) {
               //Success
                 $('#cover-spin').hide();
+
+                //console.log("results >> " + angular.toJson(result.data));
 
                 $scope.appData = result.data;
                 $scope.dataList = [];
@@ -113,20 +133,32 @@ app.controller('dashboardCtrl', ['$scope','$http', '$interval','$filter','$timeo
                         pdiff2 : value.pdiff2,
                         pdiff3 : value.pdiff3,
                         time : value.time,
-                        hotIcon: false
+                        hotIcon: false,
+                        type : value.type
                     });
                 });
 
                 if($scope.activeData.length > 0){
-                    //console.log("$scope.activeData.length >> " + $scope.activeData.length);
+                    //console.log("$scope.activeData >> " + angular.toJson($scope.activeData));
 
+                    //console.log("$scope.dataList >> " + angular.toJson($scope.dataList));
+
+
+                    $scope.activeData = [];
                     for(var a=0; a<$scope.dataList.length; a++){
                         var tempObj = $scope.dataList[a];
 
-                        arrayObjectIndexOf($scope.activeData, tempObj);
+                        // arrayObjectIndexOf($scope.activeData, tempObj);
+
+                        if(tempObj.type === 'active'){
+                               $scope.activeData.push(tempObj);
+
+                        }
 
                     }
                 }
+
+                console.log("active data >> "  + $scope.activeData.length + " << >> " + angular.toJson($scope.activeData));
 
 
                 $scope.volumeRankData = $filter('orderBy')($scope.dataList, 'vRank');
@@ -180,7 +212,6 @@ app.controller('dashboardCtrl', ['$scope','$http', '$interval','$filter','$timeo
              });
 
 
-        /*}, 50000);*/
 
 
 

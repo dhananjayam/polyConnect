@@ -7,7 +7,11 @@ import json
 import time
 from concurrent.futures import ThreadPoolExecutor
 from pytz import timezone
+from symbols import getSymbols
 import datetime
+import requests
+import csv
+
 
 redisurl = 'redis://h:p178447b35881e7b0c20eb34bd323348b8fc25dbb93281eb32856044f5e7fff2c@ec2-3-234-145-181.compute-1.amazonaws.com:27899'
 r = redis.from_url(redisurl)
@@ -17,6 +21,7 @@ volRank = {}
 combinedRank = {}
 fireList = {}
 mktOpen = is_open()
+activesym=[]
 
 def runForEachSymbol(symbol):
     global priceRank
@@ -25,29 +30,45 @@ def runForEachSymbol(symbol):
     global fireList
     global r
     global mktOpen
-    symbol=str(symbol, 'utf-8')
-    mv, mp, vol, close,endtime = calcPVSlopes(r, symbol,conf,mktOpen)
+    global activesym
+    #symbol=str(symbol, 'utf-8')
+
+    type = None
+    if symbol in activesym:
+        type = "active"
+    mv, mp, vol, close,endtime = calcPVSlopes(r, symbol,conf,mktOpen,type)
     if mp is not None:
+        now =int(time.time())
+        print(now)
+        print(endtime)
         d = datetime.datetime.fromtimestamp(int(endtime[0]))
         ny = d.astimezone(timezone('US/Eastern'))
+        dt = ny.isoformat()
 
-        #d1 = datetime.datetime.fromtimestamp(int(endtime[2]))
-        dt =ny.isoformat()
-        #dt1 =d.isoformat()
-        #print('Symbol:{}, D0:{}, D1:{}'.format(symbol,d,d1))
-        compSym = {"time": dt,"vRank": -1, "pRank": -1, "cRank": -1,"mp": mp, "mv": mv, "price": close[0], "pdiff1": close[0] - close[1], "pdiff2": close[0] - close[2],
-                   "pdiff3": close[0] - close[2],
-                   "vol": vol[0], "vdiff1": vol[0] - vol[1], "vdiff2": vol[0] - vol[2], "vdiff3": vol[0] - vol[2]
-                   }
-        #print(compSym)
+        if now-endtime[0]<100:
+            compSym = {"time": dt,"vRank": -1, "pRank": -1, "cRank": -1,"mp": mp, "mv": mv, "price": close[0], "pdiff1": close[0] - close[1], "pdiff2": close[0] - close[2],
+                       "pdiff3": close[0] - close[2],
+                       "vol": vol[0], "vdiff1": vol[0] - vol[1], "vdiff2": vol[0] - vol[2], "vdiff3": vol[0] - vol[2],"type":type
+                       }
+            priceRank[symbol] = mp
+            volRank[symbol] = mv
+            combinedRank[symbol] = mp * mv
+            fireList[symbol] = compSym
+        else:
+            if type=="active":
+                compSym = {"time": dt, "vRank": -1, "pRank": -1, "cRank": -1, "mp": mp, "mv": mv, "price": close[0],
+                           "pdiff1": close[0] - close[1], "pdiff2": close[0] - close[2],
+                           "pdiff3": close[0] - close[2],
+                           "vol": vol[0], "vdiff1": vol[0] - vol[1], "vdiff2": vol[0] - vol[2],
+                           "vdiff3": vol[0] - vol[2], "type": type}
+                priceRank[symbol] = mp
+                volRank[symbol] = mv
+                combinedRank[symbol] = mp * mv
+                fireList[symbol] = compSym
 
-        priceRank[symbol] = mp
-        volRank[symbol] = mv
-        combinedRank[symbol] = mp * mv
-        fireList[symbol] = compSym
 
 
-def gensignal():
+def gensignal(actsyms):
     global conf
     app_json='Test'
     global priceRank
@@ -56,19 +77,25 @@ def gensignal():
     global fireList
     global r
     global mktOpen
+    global activesym
     dataList = {}
     startime =time.time()
     print('MktOpen:',mktOpen)
 
-
+    if actsyms is not None and len(actsyms)>0:
+        activesym=actsyms.split(",")
 
     symbolList=[]
-    symbols = "symbols"
-    symbolList = r.smembers(symbols)
+    symbolList =getSymbols()
+    if len(symbolList)<1:
+        symbols = "symbols"
+        symList = r.smembers(symbols)
+        for sym in symList:
+            symbolList.append(str(sym, 'utf-8'))
     #print(symbolList)
     symCount =len(symbolList)
     print('symbolList:{}'.format(symCount))
-    symList = list(symbolList) [:5000]
+    symList = list(symbolList) [:100]
     #symList=['ORCL']
     print('Running gensignal')
     with ThreadPoolExecutor(max_workers=50) as executor:
@@ -123,7 +150,7 @@ def gensignal():
     key1_list = list(fireList.keys())
     for key in key1_list:
             rec = fireList[key]
-            if ((rec["pRank"]>=0 and rec["pRank"]<12) or (rec["vRank"] >0 and rec["vRank"] <12) or  (rec["cRank"]>0 and rec["cRank"]<24)) :
+            if ((rec["pRank"]>=0 and rec["pRank"]<12) or (rec["vRank"] >0 and rec["vRank"] <12) or  (rec["cRank"]>0 and rec["cRank"]<24)or (rec["type"]=="active")) :
                print("allz well")
             else :
                 if key in fireList.keys():
@@ -140,7 +167,15 @@ def gensignal():
     endtime=time.time()
 
     print(app_json)
+
     print('Time taken to finish run:{}'.format(int(endtime - startime)))
+    print(type(app_json))
     return app_json
 
-#gensignal()
+#gensignal("")
+
+
+
+
+#getYestPrice()
+#getSymbols()

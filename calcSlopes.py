@@ -12,7 +12,7 @@ def getBarData(i):
 		return barData
 
 
-def calcPVSlopes(r,symbol,conf,mktOpen):
+def calcPVSlopes(r,symbol,conf,mktOpen,type):
     global red
     volume = []
     close = []
@@ -36,22 +36,18 @@ def calcPVSlopes(r,symbol,conf,mktOpen):
             vl=0
             for i in ohlc:
                     barData = r.hgetall(i)
-                    print(barData)
+                    #print(barData)
                     x=x+1
                     for key, value in barData.items():
                         if str(key, 'utf-8') == "volume":
                             volume.append(int(value))
-                            vl=int(value)
-                            if vl < 300: return Mv, Mp, volume, close, endtime
                         elif str(key, 'utf-8') == "close":
                             close.append(float(value))
-                            cl = (float(value))
-                            if cl <1 : return Mv, Mp,volume,close,endtime
                         elif str(key, 'utf-8') == "endtime":
                             endtime.append(int(value))
                             millis = int(round(time.time()))
                             #print('i =',i)
-                            if x==1 and mktOpen :
+                            if x==1 and mktOpen and type!="active" :
                                 #print('Symbol: {}, CurrentTime: {} LatestBar:{}'.format(symbol, str(millis), str(value)))
                                 if int(value) < (millis - 120)  :
                                     return Mv, Mp,volume,close,endtime
@@ -59,8 +55,8 @@ def calcPVSlopes(r,symbol,conf,mktOpen):
 
 
 
-                #print('Volume: {}'.format(volume))
-                #print('Close: {}'.format(close))
+                    #print('Volume: {}'.format(volume))
+                    #print('Close: {}'.format(close))
                 #print('EndTime1: {}'.format(endtime))
 
             # Volume calculations
@@ -126,7 +122,7 @@ def calcPVSlopes(r,symbol,conf,mktOpen):
                 Mp = sum(numPriceList) / sum(timeSquaredList)
                 #print(numVolList)
                 #print(timeSquaredList)
-                print('Mv:{} Mp:{}'.format(Mv, Mp))
+                #print('Mv:{} Mp:{}'.format(Mv, Mp))
     except AssertionError as error:
             #print(error)
             print('Error calculating slopes for :{}'.format(symbol))
